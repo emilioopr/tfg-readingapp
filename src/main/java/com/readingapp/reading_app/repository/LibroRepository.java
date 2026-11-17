@@ -42,8 +42,9 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     @Query("SELECT l FROM Libro l WHERE l.genero = :genero ORDER BY l.idlibro DESC")
     List<Libro> findByGenero(@Param("genero") String genero, Pageable pageable);
 
-    @Query("SELECT r.libro FROM Resena r WHERE r.esPublica = true AND r.fechaCreacion > :desde " +
-            "GROUP BY r.libro ORDER BY COUNT(r) DESC, r.libro.idlibro")
+    // JOIN explícito: con "r.libro.idlibro" en el ORDER BY, Hibernate ordena por la FK de resena y PostgreSQL lo rechaza
+    @Query("SELECT l FROM Resena r JOIN r.libro l WHERE r.esPublica = true AND r.fechaCreacion > :desde " +
+            "GROUP BY l ORDER BY COUNT(r) DESC, l.idlibro")
     List<Libro> findPopulares(@Param("desde") LocalDateTime desde, Pageable pageable);
 
     @Query("SELECT r.libro FROM Resena r WHERE r.esPublica = true AND r.usuario IN " +

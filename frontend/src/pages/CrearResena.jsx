@@ -29,6 +29,7 @@ export default function CrearResena() {
     const [tieneSpoiler, setTieneSpoiler] = useState(false)
     const [leidoPreviamente, setLeidoPreviamente] = useState(false)
     const [error, setError] = useState('')
+    const [enviando, setEnviando] = useState(false)
 
     const cargarLibro = useCallback(async () => {
         try { const res = await api.get(`/libros/${idlibro}`); setLibro(res.data) }
@@ -69,10 +70,12 @@ export default function CrearResena() {
     const soloPuntuar = async () => {
         setError('')
         if (puntuacion === 0) { setError('Elige una puntuación'); return }
+        if (enviando) return
+        setEnviando(true)
         try {
             await api.put(`/valoraciones/libro/${idlibro}`, { puntuacion })
             navigate(`/libro/${idlibro}`)
-        } catch (err) { setError(err.response?.data?.mensaje || 'Error al guardar la puntuación') }
+        } catch (err) { setError(err.response?.data?.mensaje || 'Error al guardar la puntuación'); setEnviando(false) }
     }
 
     const toggleEtiqueta = (et) => { setEtiquetas(prev => prev.includes(et) ? prev.filter(e => e !== et) : [...prev, et]) }
@@ -81,6 +84,9 @@ export default function CrearResena() {
         e.preventDefault(); setError('')
         if (puntuacion === 0) { setError('La puntuación es obligatoria'); return }
         if (ritmo === 0) { setError('El ritmo es obligatorio'); return }
+        // Evita el doble clic: sin esto, dos POST seguidos podían crear la reseña dos veces
+        if (enviando) return
+        setEnviando(true)
         try {
             if (esEdicion) {
                 await api.put(`/resenas/${idresena}`, { texto, puntuacion, ritmo, etiquetas, esPublica, tieneSpoiler })
@@ -89,7 +95,7 @@ export default function CrearResena() {
                 await api.post('/resenas', { texto, puntuacion, ritmo, etiquetas, esPublica, tieneSpoiler, leidopreviamente: leidoPreviamente, idlibro: parseInt(idlibro), idusuario: usuario.id })
                 navigate(`/libro/${idlibro}`)
             }
-        } catch (err) { setError(err.response?.data?.mensaje || (esEdicion ? 'Error al actualizar' : 'Error al crear la reseña')) }
+        } catch (err) { setError(err.response?.data?.mensaje || (esEdicion ? 'Error al actualizar' : 'Error al crear la reseña')); setEnviando(false) }
     }
 
     const handleClickEstrella = (estrella, esMitadIzquierda) => {
@@ -194,11 +200,11 @@ export default function CrearResena() {
                                 <label className="flex items-center gap-2 text-texto-sec text-sm cursor-pointer"><input type="checkbox" checked={leidoPreviamente} onChange={(e) => setLeidoPreviamente(e.target.checked)} className="accent-acento" />Relectura</label>
                             )}
                         </div>
-                        <button type="submit" className="w-full btn-acento">
-                            {esEdicion ? 'Guardar cambios' : 'Publicar reseña'}
+                        <button type="submit" disabled={enviando} className="w-full btn-acento">
+                            {enviando ? 'Guardando…' : esEdicion ? 'Guardar cambios' : 'Publicar reseña'}
                         </button>
                         {!esEdicion && (
-                            <button type="button" onClick={soloPuntuar}
+                            <button type="button" onClick={soloPuntuar} disabled={enviando}
                                     className="w-full -mt-3 btn-secundario">
                                 Solo puntuar, sin escribir reseña
                             </button>

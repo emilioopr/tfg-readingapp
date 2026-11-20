@@ -74,8 +74,13 @@ public class NotificacionService {
 
     // === MÉTODOS PARA CREAR NOTIFICACIONES DESDE OTROS SERVICIOS ===
 
+    /** Avisa al autor de una reseña de que a alguien le ha gustado; una sola vez por persona, aunque quite y vuelva a dar like. */
     @Transactional
     public void crearNotificacionLike(Resena resena, Usuario usuarioOrigen) {
+        if (notificacionRepository.existsByTipoAndResenaIdresenaAndUsuarioOrigenIdusuario(
+                TipoNotificacion.LIKE_RESENA, resena.getIdresena(), usuarioOrigen.getIdusuario())) {
+            return;
+        }
         Notificacion notificacion = Notificacion.builder()
                 .tipo(TipoNotificacion.LIKE_RESENA)
                 .mensaje(usuarioOrigen.getNombre() + " dio like a tu reseña de " + resena.getLibro().getTitulo())

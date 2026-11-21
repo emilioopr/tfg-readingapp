@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import ToastNotificaciones from '../components/ToastNotificaciones'
-import { RachaCelebracion } from '../components/Racha'
 import Cargando from '../components/Cargando'
 
 export default function MainLayout() {
@@ -16,7 +15,6 @@ export default function MainLayout() {
                 </Suspense>
             </main>
             <ToastNotificaciones />
-            <RachaCelebracion />
         </div>
     )
 }

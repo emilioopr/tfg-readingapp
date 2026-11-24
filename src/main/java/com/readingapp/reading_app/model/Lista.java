@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "lista")
+@Table(name = "lista", indexes = @Index(name = "idx_lista_usuario", columnList = "idusuario"))
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -36,7 +36,8 @@ public class Lista {
     @JoinTable(
             name = "lista_libro",
             joinColumns = @JoinColumn(name = "idlista"),
-            inverseJoinColumns = @JoinColumn(name = "idlibro")
+            inverseJoinColumns = @JoinColumn(name = "idlibro"),
+            indexes = @Index(name = "idx_lista_libro_libro", columnList = "idlibro")
     )
     private Set<Libro> libros = new HashSet<>();
 }

@@ -24,7 +24,6 @@ public class RetoDTO {
         private LocalDate fechaInicio;
         @NotNull
         private LocalDate fechaFin;
-        private Long idCreador;  // null para PREDEFINIDO/COLABORATIVO
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

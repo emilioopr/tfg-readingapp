@@ -11,8 +11,6 @@ public class SeguimientoDTO {
         private Integer numPagina;
         @NotNull(message = "El estado es obligatorio")
         private EstadoLectura estado;
-        @NotNull(message = "El usuario es obligatorio")
-        private Long idusuario;
         @NotNull(message = "El libro es obligatorio")
         private Long idlibro;
     }

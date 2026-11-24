@@ -22,10 +22,7 @@ public class RetoController {
 
     @PostMapping
     public ResponseEntity<RetoDTO.Response> crear(@Valid @RequestBody RetoDTO.CreateRequest request) {
-        if (request.getIdCreador() != null) {
-            SecurityUtils.validarUsuario(request.getIdCreador());
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(retoService.crear(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(retoService.crear(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/{id}")
@@ -76,30 +73,24 @@ public class RetoController {
     }
 
     @PostMapping("/{id}/unirse")
-    public ResponseEntity<RetoDTO.ParticipanteResponse> unirse(
-            @PathVariable Long id, @RequestParam Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        return ResponseEntity.ok(retoService.unirse(id, usuarioId));
+    public ResponseEntity<RetoDTO.ParticipanteResponse> unirse(@PathVariable Long id) {
+        return ResponseEntity.ok(retoService.unirse(id, SecurityUtils.getUsuarioAutenticadoId()));
     }
 
     @PutMapping("/{id}/progreso")
-    public ResponseEntity<RetoDTO.ParticipanteResponse> recalcularProgreso(
-            @PathVariable Long id, @RequestParam Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        return ResponseEntity.ok(retoService.recalcularProgreso(id, usuarioId));
+    public ResponseEntity<RetoDTO.ParticipanteResponse> recalcularProgreso(@PathVariable Long id) {
+        return ResponseEntity.ok(retoService.recalcularProgreso(id, SecurityUtils.getUsuarioAutenticadoId()));
     }
 
     @DeleteMapping("/{id}/abandonar")
-    public ResponseEntity<Void> abandonar(@PathVariable Long id, @RequestParam Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        retoService.abandonar(id, usuarioId);
+    public ResponseEntity<Void> abandonar(@PathVariable Long id) {
+        retoService.abandonar(id, SecurityUtils.getUsuarioAutenticadoId());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id, @RequestParam Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        retoService.eliminar(id, usuarioId);
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        retoService.eliminar(id, SecurityUtils.getUsuarioAutenticadoId());
         return ResponseEntity.noContent().build();
     }
 }

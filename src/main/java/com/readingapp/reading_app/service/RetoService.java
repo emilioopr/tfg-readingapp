@@ -35,23 +35,13 @@ public class RetoService {
     private final NotificacionService notificacionService;
     private final Clock clock;
 
-    public RetoDTO.Response crear(RetoDTO.CreateRequest request) {
+    public RetoDTO.Response crear(Long idcreador, RetoDTO.CreateRequest request) {
         if (request.getModalidad() == ModalidadReto.PREDEFINIDO
                 || request.getModalidad() == ModalidadReto.COLABORATIVO) {
             SecurityUtils.validarAdmin();
         }
-        Usuario creador = null;
-
-        if (request.getModalidad() == ModalidadReto.PERSONAL
-                || request.getModalidad() == ModalidadReto.COMPARTIDO) {
-            if (request.getIdCreador() == null) {
-                throw new IllegalArgumentException("Los retos personales y compartidos requieren un creador");
-            }
-            creador = usuarioRepository.findById(request.getIdCreador())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        } else if (request.getIdCreador() != null) {
-            creador = usuarioRepository.findById(request.getIdCreador()).orElse(null);
-        }
+        Usuario creador = usuarioRepository.findById(idcreador)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
         LocalDate fechaInicio = LocalDate.now(clock);
 
@@ -73,8 +63,7 @@ public class RetoService {
         reto = retoRepository.save(reto);
 
         // Quien crea un reto personal o "con amigos" participa en él desde el principio
-        if ((request.getModalidad() == ModalidadReto.PERSONAL || request.getModalidad() == ModalidadReto.COMPARTIDO)
-                && creador != null) {
+        if (request.getModalidad() == ModalidadReto.PERSONAL || request.getModalidad() == ModalidadReto.COMPARTIDO) {
             ParticipanteReto participante = ParticipanteReto.builder()
                     .reto(reto)
                     .usuario(creador)

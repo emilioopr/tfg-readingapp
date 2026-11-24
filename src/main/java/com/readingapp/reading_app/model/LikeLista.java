@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 /** Like de un usuario a una lista. Guarda la fecha por si se quieren ordenar las listas por populares. */
 @Entity
 @Table(name = "like_lista",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlista"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlista"}),
+        indexes = @Index(name = "idx_like_lista_lista", columnList = "idlista"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class LikeLista {
 

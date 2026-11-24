@@ -93,8 +93,8 @@ export default function Recomendaciones() {
         const cargar = async () => {
             try {
                 const [recRes, envRes] = await Promise.all([
-                    api.get(`/recomendaciones/recibidas/${usuario.id}`),
-                    api.get(`/recomendaciones/enviadas/${usuario.id}`),
+                    api.get(`/recomendaciones/recibidas`),
+                    api.get(`/recomendaciones/enviadas`),
                 ])
                 const datos = [...(recRes.data.content || recRes.data || []), ...(envRes.data.content || envRes.data || [])]
                 setTodas(datos)

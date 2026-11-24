@@ -30,8 +30,8 @@ export default function AutorDetalle() {
 
     const toggleSeguir = async () => {
         try {
-            if (siguiendo) await api.delete(`/autores/${id}/seguir/${usuario.id}`)
-            else await api.post(`/autores/${id}/seguir/${usuario.id}`)
+            if (siguiendo) await api.delete(`/autores/${id}/seguir`)
+            else await api.post(`/autores/${id}/seguir`)
             setSiguiendo(!siguiendo); cargarAutor()
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }

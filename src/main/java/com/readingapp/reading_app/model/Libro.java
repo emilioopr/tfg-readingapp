@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "libro")
+@Table(name = "libro", indexes = {
+        @Index(name = "idx_libro_autor_titulo", columnList = "idautor, titulo"),
+        @Index(name = "idx_libro_idapiexterna", columnList = "idapiexterna"),
+        @Index(name = "idx_libro_isbn", columnList = "isbn"),
+        @Index(name = "idx_libro_genero", columnList = "genero")})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder

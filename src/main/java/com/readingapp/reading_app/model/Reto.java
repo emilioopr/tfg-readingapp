@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "reto")
+@Table(name = "reto", indexes = @Index(name = "idx_reto_creador", columnList = "id_creador"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Reto {
 
@@ -39,7 +39,7 @@ public class Reto {
     @Column(name = "fechafin", nullable = false)
     private LocalDate fechaFin;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_creador")
     private Usuario creador; // null en PREDEFINIDO y COLABORATIVO
 

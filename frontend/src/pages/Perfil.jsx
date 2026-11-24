@@ -96,8 +96,8 @@ export default function Perfil() {
 
     const toggleSeguir = async () => {
         try {
-            if (siguiendo) await api.delete(`/usuarios/${usuario.id}/seguir/${perfilId}`)
-            else await api.post(`/usuarios/${usuario.id}/seguir/${perfilId}`)
+            if (siguiendo) await api.delete(`/usuarios/${perfilId}/seguir`)
+            else await api.post(`/usuarios/${perfilId}/seguir`)
             setSiguiendo(!siguiendo)
             cargarPerfil()
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
@@ -105,7 +105,7 @@ export default function Perfil() {
 
     const quitarFavorito = async (idlibro) => {
         try {
-            await api.delete(`/libros/${idlibro}/favorito/${perfilId}`)
+            await api.delete(`/libros/${idlibro}/favorito`)
             cargarFavoritos()
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }

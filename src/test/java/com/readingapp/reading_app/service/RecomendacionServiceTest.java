@@ -56,7 +56,6 @@ class RecomendacionServiceTest {
 
     private RecomendacionDTO.CreateRequest deAnaALuis() {
         RecomendacionDTO.CreateRequest r = new RecomendacionDTO.CreateRequest();
-        r.setIdusuarioEmisor(1L);
         r.setIdusuarioReceptor(2L);
         r.setIdlibro(10L);
         r.setMensaje("Te va a encantar");
@@ -69,7 +68,7 @@ class RecomendacionServiceTest {
         ana.getSeguidos().add(luis);
         luis.getSeguidos().add(ana);
 
-        RecomendacionDTO.Response res = recomendacionService.crear(deAnaALuis());
+        RecomendacionDTO.Response res = recomendacionService.crear(1L, deAnaALuis());
 
         assertThat(res.getTituloLibro()).isEqualTo("Las ratas");
         verify(notificacionService).crearNotificacionRecomendacion(any(Recomendacion.class));
@@ -80,7 +79,7 @@ class RecomendacionServiceTest {
     void soloLeSigues() {
         ana.getSeguidos().add(luis);
 
-        assertThatThrownBy(() -> recomendacionService.crear(deAnaALuis()))
+        assertThatThrownBy(() -> recomendacionService.crear(1L, deAnaALuis()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mutuamente");
         verify(recomendacionRepository, never()).save(any());
@@ -91,7 +90,7 @@ class RecomendacionServiceTest {
     void soloTeSigue() {
         luis.getSeguidos().add(ana);
 
-        assertThatThrownBy(() -> recomendacionService.crear(deAnaALuis()))
+        assertThatThrownBy(() -> recomendacionService.crear(1L, deAnaALuis()))
                 .isInstanceOf(IllegalArgumentException.class);
         verify(notificacionService, never()).crearNotificacionRecomendacion(any());
     }
@@ -102,7 +101,7 @@ class RecomendacionServiceTest {
         RecomendacionDTO.CreateRequest r = deAnaALuis();
         r.setIdusuarioReceptor(1L);
 
-        assertThatThrownBy(() -> recomendacionService.crear(r))
+        assertThatThrownBy(() -> recomendacionService.crear(1L, r))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

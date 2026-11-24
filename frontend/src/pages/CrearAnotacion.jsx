@@ -36,7 +36,7 @@ export default function CrearAnotacion() {
         e.preventDefault(); setError(''); setExito('')
         if (!texto.trim()) { setError('El texto es obligatorio'); return }
         try {
-            await api.post('/anotaciones', { texto, parte, tipo, esPublica, tieneSpoiler, idlibro: parseInt(idlibro), idusuario: usuario.id })
+            await api.post('/anotaciones', { texto, parte, tipo, esPublica, tieneSpoiler, idlibro: parseInt(idlibro) })
             setExito('Anotación guardada'); setTexto(''); setParte(''); cargarAnotaciones()
         } catch (err) { setError(err.response?.data?.mensaje || 'Error al crear anotación') }
         navigate('/')

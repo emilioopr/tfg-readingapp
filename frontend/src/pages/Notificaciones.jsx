@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import { useNotificaciones } from '../context/NotificacionesContext'
 import api from '../api/axios'
 import { X } from '@phosphor-icons/react'
@@ -11,7 +10,6 @@ const TAMANIO = 20
 
 export default function Notificaciones() {
     const { avisar, avisarCarga } = useAvisos()
-    const { usuario } = useAuth()
     const { refrescar } = useNotificaciones()
     const navigate = useNavigate()
     const [notificaciones, setNotificaciones] = useState([])
@@ -21,18 +19,18 @@ export default function Notificaciones() {
 
     const cargarNotificaciones = useCallback(async () => {
         try {
-            const res = await api.get(`/notificaciones/usuario/${usuario.id}?page=0&size=${TAMANIO}`)
+            const res = await api.get(`/notificaciones?page=0&size=${TAMANIO}`)
             const datos = res.data.content || res.data || []
             setNotificaciones(datos)
             setPagina(0)
             setHayMas(datos.length === TAMANIO)
         }
         catch (err) { console.error('Error:', err); avisarCarga(err, 'No se han podido cargar las notificaciones.') } finally { setLoading(false) }
-    }, [avisarCarga, usuario])
+    }, [avisarCarga])
 
     const cargarMas = async () => {
         try {
-            const res = await api.get(`/notificaciones/usuario/${usuario.id}?page=${pagina + 1}&size=${TAMANIO}`)
+            const res = await api.get(`/notificaciones?page=${pagina + 1}&size=${TAMANIO}`)
             const datos = res.data.content || res.data || []
             setNotificaciones(prev => [...prev, ...datos])
             setPagina(p => p + 1)
@@ -57,7 +55,7 @@ export default function Notificaciones() {
     }
 
     const marcarTodasLeidas = async () => {
-        try { await api.put(`/notificaciones/usuario/${usuario.id}/leer-todas`); setNotificaciones(prev => prev.map(n => ({ ...n, leida: true }))); refrescar() }
+        try { await api.put(`/notificaciones/leer-todas`); setNotificaciones(prev => prev.map(n => ({ ...n, leida: true }))); refrescar() }
         catch (err) { console.error('Error:', err); avisarCarga(err, 'No se han podido marcar como leídas.') }
     }
 

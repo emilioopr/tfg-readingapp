@@ -37,8 +37,8 @@ public class AnotacionService {
     private final NotificacionRepository notificacionRepository;
 
     @Transactional
-    public AnotacionDTO.Response crear(AnotacionDTO.CreateRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.getIdusuario())
+    public AnotacionDTO.Response crear(Long idusuario, AnotacionDTO.CreateRequest request) {
+        Usuario usuario = usuarioRepository.findById(idusuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         Libro libro = libroRepository.findById(request.getIdlibro())
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));

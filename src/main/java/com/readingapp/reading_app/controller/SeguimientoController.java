@@ -21,8 +21,7 @@ public class SeguimientoController {
 
     @PostMapping
     public ResponseEntity<SeguimientoDTO.Response> registrar(@Valid @RequestBody SeguimientoDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(request.getIdusuario());
-        return ResponseEntity.status(HttpStatus.CREATED).body(seguimientoService.registrar(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(seguimientoService.registrar(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/{id}")

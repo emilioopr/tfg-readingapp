@@ -97,7 +97,7 @@ class ResenaServiceTest {
 
     private ResenaDTO.CreateRequest peticion(String puntuacion) {
         return ResenaDTO.CreateRequest.builder()
-                .idusuario(ID_USUARIO).idlibro(ID_LIBRO).texto("Muy buena")
+                .idlibro(ID_LIBRO).texto("Muy buena")
                 .puntuacion(puntuacion != null ? new BigDecimal(puntuacion) : null)
                 .build();
     }
@@ -118,7 +118,7 @@ class ResenaServiceTest {
         void sinTerminar() {
             ultimoEstado(EstadoLectura.LEYENDO);
 
-            assertThatThrownBy(() -> resenaService.crear(peticion("4")))
+            assertThatThrownBy(() -> resenaService.crear(ID_USUARIO, peticion("4")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("terminado");
             verify(resenaRepository, never()).save(any());
@@ -130,7 +130,7 @@ class ResenaServiceTest {
             when(seguimientoRepository.findTopByUsuarioIdusuarioAndLibroIdlibroOrderByIdseguimientoDesc(ID_USUARIO, ID_LIBRO))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> resenaService.crear(peticion("4")))
+            assertThatThrownBy(() -> resenaService.crear(ID_USUARIO, peticion("4")))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -139,7 +139,7 @@ class ResenaServiceTest {
         void unaResenaPorLectura() {
             leidoVeces(1, 1);
 
-            assertThatThrownBy(() -> resenaService.crear(peticion("4")))
+            assertThatThrownBy(() -> resenaService.crear(ID_USUARIO, peticion("4")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("todas tus lecturas");
         }
@@ -149,7 +149,7 @@ class ResenaServiceTest {
         void relecturaPermiteOtraResena() {
             leidoVeces(2, 1);
 
-            ResenaDTO.Response res = resenaService.crear(peticion("4.5"));
+            ResenaDTO.Response res = resenaService.crear(ID_USUARIO, peticion("4.5"));
 
             assertThat(res.getPuntuacion()).isEqualByComparingTo("4.5");
         }
@@ -159,7 +159,7 @@ class ResenaServiceTest {
         void puntuacionEnMediosPuntos() {
             leidoVeces(1, 0);
 
-            assertThatThrownBy(() -> resenaService.crear(peticion("3.7")))
+            assertThatThrownBy(() -> resenaService.crear(ID_USUARIO, peticion("3.7")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("0.5");
         }
@@ -169,7 +169,7 @@ class ResenaServiceTest {
         void valoresPorDefecto() {
             leidoVeces(1, 0);
 
-            ResenaDTO.Response res = resenaService.crear(peticion("4"));
+            ResenaDTO.Response res = resenaService.crear(ID_USUARIO, peticion("4"));
 
             assertThat(res.getEsPublica()).isTrue();
             assertThat(res.getTieneSpoiler()).isFalse();
@@ -181,7 +181,7 @@ class ResenaServiceTest {
         void publicarNoNotificaSeguidores() {
             leidoVeces(1, 0);
 
-            resenaService.crear(peticion("4"));
+            resenaService.crear(ID_USUARIO, peticion("4"));
 
             verifyNoInteractions(notificacionService);
         }
@@ -191,7 +191,7 @@ class ResenaServiceTest {
         void resenaSustituyeValoracion() {
             leidoVeces(1, 0);
 
-            resenaService.crear(peticion("4"));
+            resenaService.crear(ID_USUARIO, peticion("4"));
 
             verify(valoracionRepository).borrar(ID_USUARIO, ID_LIBRO);
         }
@@ -336,7 +336,7 @@ class ResenaServiceTest {
         leidoVeces(1, 0);
         ArgumentCaptor<Resena> guardada = ArgumentCaptor.forClass(Resena.class);
 
-        resenaService.crear(peticion("4"));
+        resenaService.crear(ID_USUARIO, peticion("4"));
 
         verify(resenaRepository).save(guardada.capture());
         assertThat(guardada.getValue().getEtiquetas()).isEqualTo(Set.of());

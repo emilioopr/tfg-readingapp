@@ -6,7 +6,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notificacion")
+@Table(name = "notificacion", indexes = {
+        @Index(name = "idx_notificacion_usuario", columnList = "idusuario, fecha"),
+        @Index(name = "idx_notificacion_resena", columnList = "idresena"),
+        @Index(name = "idx_notificacion_anotacion", columnList = "idanotacion"),
+        @Index(name = "idx_notificacion_lista", columnList = "idlista")})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -49,7 +53,7 @@ public class Notificacion {
     @JoinColumn(name = "idlibro")
     private Libro libro;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idreto")
     private Reto reto;
 

@@ -26,8 +26,7 @@ public class ResenaController {
 
     @PostMapping
     public ResponseEntity<ResenaDTO.Response> crear(@Valid @RequestBody ResenaDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(request.getIdusuario());
-        return ResponseEntity.status(HttpStatus.CREATED).body(resenaService.crear(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(resenaService.crear(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/{id}")
@@ -35,11 +34,10 @@ public class ResenaController {
         return ResponseEntity.ok(resenaService.obtenerPorId(id));
     }
 
-    @GetMapping("/usuario/{idusuario}")
-    public ResponseEntity<Page<ResenaDTO.Response>> obtenerPorUsuario(
-            @PathVariable Long idusuario, @PageableDefault(size = 10) Pageable pageable) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(resenaService.obtenerPorUsuario(idusuario, pageable));
+    /*Todas tus reseñas, también las privadas.*/
+    @GetMapping("/mias")
+    public ResponseEntity<Page<ResenaDTO.Response>> obtenerMias(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(resenaService.obtenerPorUsuario(SecurityUtils.getUsuarioAutenticadoId(), pageable));
     }
 
     @GetMapping("/usuario/{idusuario}/publicas")
@@ -83,23 +81,20 @@ public class ResenaController {
 
     // === LIKES ===
 
-    @PostMapping("/{resenaId}/like/{usuarioId}")
-    public ResponseEntity<Void> darLike(@PathVariable Long resenaId, @PathVariable Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        resenaService.darLike(resenaId, usuarioId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{resenaId}/like/{usuarioId}")
-    public ResponseEntity<Void> quitarLike(@PathVariable Long resenaId, @PathVariable Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        resenaService.quitarLike(resenaId, usuarioId);
+    @PostMapping("/{resenaId}/like")
+    public ResponseEntity<Void> darLike(@PathVariable Long resenaId) {
+        resenaService.darLike(resenaId, SecurityUtils.getUsuarioAutenticadoId());
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/likes/{idusuario}")
-    public ResponseEntity<List<ResenaDTO.Response>> obtenerLikes(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(resenaService.obtenerLikesPorUsuario(idusuario));
+    @DeleteMapping("/{resenaId}/like")
+    public ResponseEntity<Void> quitarLike(@PathVariable Long resenaId) {
+        resenaService.quitarLike(resenaId, SecurityUtils.getUsuarioAutenticadoId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<List<ResenaDTO.Response>> obtenerLikes() {
+        return ResponseEntity.ok(resenaService.obtenerLikesPorUsuario(SecurityUtils.getUsuarioAutenticadoId()));
     }
 }

@@ -21,9 +21,8 @@ public class RachaController {
     }
 
     /*Recalcular y guardar la racha propia (gasta/concede protectores, actualiza el récord).*/
-    @PostMapping("/usuario/{idusuario}/actualizar")
-    public ResponseEntity<RachaDTO.Response> actualizar(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(rachaService.actualizar(idusuario));
+    @PostMapping("/actualizar")
+    public ResponseEntity<RachaDTO.Response> actualizar() {
+        return ResponseEntity.ok(rachaService.actualizar(SecurityUtils.getUsuarioAutenticadoId()));
     }
 }

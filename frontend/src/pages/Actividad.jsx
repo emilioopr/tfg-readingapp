@@ -22,7 +22,7 @@ export default function Actividad() {
         if (!usuario) return
         const cargar = async () => {
             try {
-                const res = await api.get(`/actividad/seguidos/${usuario.id}?page=0&size=${TAMANIO}`)
+                const res = await api.get(`/actividad/seguidos?page=0&size=${TAMANIO}`)
                 setEventos(res.data.eventos || [])
                 setHayMas(res.data.hayMas)
             } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar la actividad.') }
@@ -34,7 +34,7 @@ export default function Actividad() {
     const cargarMas = async () => {
         setCargandoMas(true)
         try {
-            const res = await api.get(`/actividad/seguidos/${usuario.id}?page=${pagina + 1}&size=${TAMANIO}`)
+            const res = await api.get(`/actividad/seguidos?page=${pagina + 1}&size=${TAMANIO}`)
             setEventos(prev => [...prev, ...(res.data.eventos || [])])
             setPagina(p => p + 1)
             setHayMas(res.data.hayMas)

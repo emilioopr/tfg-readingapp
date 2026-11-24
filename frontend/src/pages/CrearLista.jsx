@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import { X } from '@phosphor-icons/react'
 import { useAvisos } from '../context/AvisosContext'
 
 export default function CrearLista() {
     const { avisarCarga } = useAvisos()
-    const { usuario } = useAuth()
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const volver = searchParams.get('volver')
@@ -41,7 +39,7 @@ export default function CrearLista() {
                 await api.put(`/listas/${idlista}`, { nombre, descripcion, esPublica })
                 navigate(volver || `/lista/${idlista}`)
             } else {
-                await api.post(`/listas/usuario/${usuario.id}`, { nombre, descripcion, esPublica })
+                await api.post(`/listas`, { nombre, descripcion, esPublica })
                 navigate(volver || '/listas')
             }
         } catch (err) { setError(err.response?.data?.mensaje || (esEdicion ? 'Error al actualizar' : 'Error al crear la lista')) }

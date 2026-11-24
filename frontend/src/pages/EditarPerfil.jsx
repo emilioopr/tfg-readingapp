@@ -26,7 +26,7 @@ export default function EditarPerfil() {
         e.preventDefault(); setError(''); setExito('')
         if (!nombre.trim()) { setError('El nombre es obligatorio'); return }
         try {
-            const res = await api.put(`/usuarios/${usuario.id}`, { nombre, biografia, avatar })
+            const res = await api.put(`/usuarios/yo`, { nombre, biografia, avatar })
             login({ token: localStorage.getItem('token'), idusuario: usuario.id, nombre: res.data.nombre, email: usuario.email, rol: usuario.rol })
             setExito('Perfil actualizado')
         } catch (err) { setError(err.response?.data?.mensaje || 'Error al actualizar') }

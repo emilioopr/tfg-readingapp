@@ -68,7 +68,8 @@ public class Usuario {
     @JoinTable(
             name = "sigue",
             joinColumns = @JoinColumn(name = "idusuario_seguidor"),
-            inverseJoinColumns = @JoinColumn(name = "idusuario_seguido")
+            inverseJoinColumns = @JoinColumn(name = "idusuario_seguido"),
+            indexes = @Index(name = "idx_sigue_seguido", columnList = "idusuario_seguido")
     )
     private Set<Usuario> seguidos = new HashSet<>();
 
@@ -79,7 +80,8 @@ public class Usuario {
     @JoinTable(
             name = "sigue_autor",
             joinColumns = @JoinColumn(name = "idusuario"),
-            inverseJoinColumns = @JoinColumn(name = "idautor")
+            inverseJoinColumns = @JoinColumn(name = "idautor"),
+            indexes = @Index(name = "idx_sigue_autor_autor", columnList = "idautor")
     )
     private Set<Autor> autoresSeguidos = new HashSet<>();
 
@@ -87,7 +89,8 @@ public class Usuario {
     @JoinTable(
             name = "favorito",
             joinColumns = @JoinColumn(name = "idusuario"),
-            inverseJoinColumns = @JoinColumn(name = "idlibro")
+            inverseJoinColumns = @JoinColumn(name = "idlibro"),
+            indexes = @Index(name = "idx_favorito_libro", columnList = "idlibro")
     )
     private Set<Libro> librosFavoritos = new HashSet<>();
 
@@ -95,7 +98,8 @@ public class Usuario {
     @JoinTable(
             name = "likea",
             joinColumns = @JoinColumn(name = "idusuario"),
-            inverseJoinColumns = @JoinColumn(name = "idresena")
+            inverseJoinColumns = @JoinColumn(name = "idresena"),
+            indexes = @Index(name = "idx_likea_resena", columnList = "idresena")
     )
     private Set<Resena> resenasLikeadas = new HashSet<>();
 
@@ -104,7 +108,8 @@ public class Usuario {
     @JoinTable(
             name = "cita_guardada",
             joinColumns = @JoinColumn(name = "idusuario"),
-            inverseJoinColumns = @JoinColumn(name = "idanotacion")
+            inverseJoinColumns = @JoinColumn(name = "idanotacion"),
+            indexes = @Index(name = "idx_cita_guardada_anotacion", columnList = "idanotacion")
     )
     private Set<Anotacion> citasGuardadas = new HashSet<>();
 

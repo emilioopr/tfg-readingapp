@@ -6,7 +6,9 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "seguimiento")
+@Table(name = "seguimiento", indexes = {
+        @Index(name = "idx_seguimiento_usuario_libro", columnList = "idusuario, idlibro, idseguimiento"),
+        @Index(name = "idx_seguimiento_libro", columnList = "idlibro")})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder

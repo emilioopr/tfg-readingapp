@@ -99,7 +99,7 @@ class RetoServiceTest {
     private RetoDTO.CreateRequest peticion(ModalidadReto modalidad, LocalDate fechaFin) {
         return RetoDTO.CreateRequest.builder()
                 .titulo("Nuevo reto").tipo(TipoReto.LIBROS).modalidad(modalidad)
-                .meta(5).fechaFin(fechaFin).idCreador(ID_USUARIO)
+                .meta(5).fechaFin(fechaFin)
                 .build();
     }
 
@@ -122,7 +122,7 @@ class RetoServiceTest {
         @Test
         @DisplayName("Un reto personal añade automáticamente al creador como participante")
         void personalAnadeCreador() {
-            RetoDTO.Response res = retoService.crear(peticion(ModalidadReto.PERSONAL, HOY.plusDays(30)));
+            RetoDTO.Response res = retoService.crear(ID_USUARIO, peticion(ModalidadReto.PERSONAL, HOY.plusDays(30)));
 
             assertThat(res.getFechaInicio()).isEqualTo(HOY.toString());
             verify(participanteRetoRepository).save(argThat(p ->
@@ -132,26 +132,15 @@ class RetoServiceTest {
         @Test
         @DisplayName("Un reto compartido añade al creador como participante (si no, desaparecería para él)")
         void compartidoAnadeCreador() {
-            retoService.crear(peticion(ModalidadReto.COMPARTIDO, HOY.plusDays(30)));
+            retoService.crear(ID_USUARIO, peticion(ModalidadReto.COMPARTIDO, HOY.plusDays(30)));
 
             verify(participanteRetoRepository).save(argThat(p -> p.getUsuario() == usuario && p.getProgreso() == 0));
         }
 
         @Test
-        @DisplayName("Un reto personal sin creador no se puede crear")
-        void personalSinCreador() {
-            RetoDTO.CreateRequest request = peticion(ModalidadReto.PERSONAL, HOY.plusDays(30));
-            request.setIdCreador(null);
-
-            assertThatThrownBy(() -> retoService.crear(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("requieren un creador");
-        }
-
-        @Test
         @DisplayName("La fecha límite no puede ser anterior a hoy")
         void fechaFinPasada() {
-            assertThatThrownBy(() -> retoService.crear(peticion(ModalidadReto.PERSONAL, HOY.minusDays(1))))
+            assertThatThrownBy(() -> retoService.crear(ID_USUARIO, peticion(ModalidadReto.PERSONAL, HOY.minusDays(1))))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("anterior a hoy");
             verify(retoRepository, never()).save(any());
@@ -162,7 +151,7 @@ class RetoServiceTest {
         void oficialSinAdmin() {
             autenticarComo("USER");
 
-            assertThatThrownBy(() -> retoService.crear(peticion(ModalidadReto.PREDEFINIDO, HOY.plusDays(30))))
+            assertThatThrownBy(() -> retoService.crear(ID_USUARIO, peticion(ModalidadReto.PREDEFINIDO, HOY.plusDays(30))))
                     .isInstanceOf(AccessDeniedException.class)
                     .hasMessageContaining("administrador");
             verify(retoRepository, never()).save(any());
@@ -173,7 +162,7 @@ class RetoServiceTest {
         void colaborativoConAdmin() {
             autenticarComo("ADMIN");
 
-            RetoDTO.Response res = retoService.crear(peticion(ModalidadReto.COLABORATIVO, HOY.plusDays(30)));
+            RetoDTO.Response res = retoService.crear(ID_USUARIO, peticion(ModalidadReto.COLABORATIVO, HOY.plusDays(30)));
 
             assertThat(res.getModalidad()).isEqualTo(ModalidadReto.COLABORATIVO);
             verify(retoRepository).save(any(Reto.class));

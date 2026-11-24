@@ -25,7 +25,7 @@ export default function MisLikes() {
     const cargarLikes = useCallback(async () => {
         try {
             const [resResenas, resListas] = await Promise.all([
-                api.get(`/resenas/likes/${usuario.id}`),
+                api.get(`/resenas/likes`),
                 api.get(`/listas/likes/${usuario.id}`),
             ])
             setResenas(resResenas.data.content || resResenas.data || [])

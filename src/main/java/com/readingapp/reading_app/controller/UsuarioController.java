@@ -28,11 +28,9 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerPerfil(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO.Response> actualizar(@PathVariable Long id,
-                                                          @RequestBody UsuarioDTO.UpdateRequest request) {
-        SecurityUtils.validarUsuario(id);
-        return ResponseEntity.ok(usuarioService.actualizar(id, request));
+    @PutMapping("/yo")
+    public ResponseEntity<UsuarioDTO.Response> actualizar(@RequestBody UsuarioDTO.UpdateRequest request) {
+        return ResponseEntity.ok(usuarioService.actualizar(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     /*Borrado de una cuenta por un administrador.*/
@@ -43,20 +41,16 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/password")
-    public ResponseEntity<Void> cambiarPassword(@PathVariable Long id,
-                                                @Valid @RequestBody UsuarioDTO.CambiarPasswordRequest request) {
-        SecurityUtils.validarUsuario(id);
-        usuarioService.cambiarPassword(id, request.getActual(), request.getNueva());
+    @PutMapping("/yo/password")
+    public ResponseEntity<Void> cambiarPassword(@Valid @RequestBody UsuarioDTO.CambiarPasswordRequest request) {
+        usuarioService.cambiarPassword(SecurityUtils.getUsuarioAutenticadoId(), request.getActual(), request.getNueva());
         return ResponseEntity.noContent().build();
     }
 
     /*El propio usuario se da de baja confirmando su contraseña.*/
-    @PostMapping("/{id}/eliminar-cuenta")
-    public ResponseEntity<Void> eliminarCuentaPropia(@PathVariable Long id,
-                                                     @Valid @RequestBody UsuarioDTO.EliminarCuentaRequest request) {
-        SecurityUtils.validarUsuario(id);
-        usuarioService.eliminarCuentaPropia(id, request.getPassword());
+    @PostMapping("/yo/eliminar-cuenta")
+    public ResponseEntity<Void> eliminarCuentaPropia(@Valid @RequestBody UsuarioDTO.EliminarCuentaRequest request) {
+        usuarioService.eliminarCuentaPropia(SecurityUtils.getUsuarioAutenticadoId(), request.getPassword());
         return ResponseEntity.noContent().build();
     }
 
@@ -65,17 +59,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscarPorNombre(nombre));
     }
 
-    @PostMapping("/{seguidorId}/seguir/{seguidoId}")
-    public ResponseEntity<Void> seguirUsuario(@PathVariable Long seguidorId, @PathVariable Long seguidoId) {
-        SecurityUtils.validarUsuario(seguidorId);
-        usuarioService.seguirUsuario(seguidorId, seguidoId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/{seguidoId}/seguir")
+    public ResponseEntity<Void> seguirUsuario(@PathVariable Long seguidoId) {
+        usuarioService.seguirUsuario(SecurityUtils.getUsuarioAutenticadoId(), seguidoId);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{seguidorId}/seguir/{seguidoId}")
-    public ResponseEntity<Void> dejarDeSeguir(@PathVariable Long seguidorId, @PathVariable Long seguidoId) {
-        SecurityUtils.validarUsuario(seguidorId);
-        usuarioService.dejarDeSeguirUsuario(seguidorId, seguidoId);
+    @DeleteMapping("/{seguidoId}/seguir")
+    public ResponseEntity<Void> dejarDeSeguir(@PathVariable Long seguidoId) {
+        usuarioService.dejarDeSeguirUsuario(SecurityUtils.getUsuarioAutenticadoId(), seguidoId);
         return ResponseEntity.noContent().build();
     }
 

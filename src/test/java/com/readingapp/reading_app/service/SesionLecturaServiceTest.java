@@ -39,13 +39,13 @@ class SesionLecturaServiceTest {
     }
 
     private SesionLecturaDTO.CreateRequest sesion(int minutos) {
-        return SesionLecturaDTO.CreateRequest.builder().idusuario(1L).duracionMinutos(minutos).build();
+        return SesionLecturaDTO.CreateRequest.builder().duracionMinutos(minutos).build();
     }
 
     @Test
     @DisplayName("Una sesión de hasta 12 horas se registra y actualiza los retos")
     void sesionValida() {
-        assertThatCode(() -> sesionLecturaService.registrar(sesion(SesionLecturaDTO.MAX_MINUTOS_SESION)))
+        assertThatCode(() -> sesionLecturaService.registrar(1L, sesion(SesionLecturaDTO.MAX_MINUTOS_SESION)))
                 .doesNotThrowAnyException();
         verify(retoService).recalcularRetosActivosDeUsuario(1L);
     }
@@ -53,7 +53,7 @@ class SesionLecturaServiceTest {
     @Test
     @DisplayName("Una sesión de más de 12 horas se rechaza y no cuenta para los retos")
     void sesionDemasiadoLarga() {
-        assertThatThrownBy(() -> sesionLecturaService.registrar(sesion(100_000)))
+        assertThatThrownBy(() -> sesionLecturaService.registrar(1L, sesion(100_000)))
                 .isInstanceOf(IllegalArgumentException.class);
         verify(sesionLecturaRepository, never()).save(any());
         verify(retoService, never()).recalcularRetosActivosDeUsuario(any());

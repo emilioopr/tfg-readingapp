@@ -158,7 +158,7 @@ export default function Retos() {
 
     const unirse = async (idreto) => {
         try {
-            await api.post(`/retos/${idreto}/unirse?usuarioId=${usuario.id}`)
+            await api.post(`/retos/${idreto}/unirse`)
             await Promise.all([cargarActivos(), cargarDisponibles()])
             setTab('activos')
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
@@ -167,7 +167,7 @@ export default function Retos() {
     const abandonar = async (idreto) => {
         if (!await confirmar({ titulo: '¿Abandonar este reto?', texto: 'Perderás el progreso que llevas en él.', aceptar: 'Abandonar', peligro: true })) return
         try {
-            await api.delete(`/retos/${idreto}/abandonar?usuarioId=${usuario.id}`)
+            await api.delete(`/retos/${idreto}/abandonar`)
             await Promise.all([cargarActivos(), cargarDisponibles()])
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }

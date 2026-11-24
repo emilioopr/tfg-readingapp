@@ -190,10 +190,10 @@ export default function Busqueda() {
     const toggleSeguir = async (idusuario) => {
         try {
             if (seguidos.includes(idusuario)) {
-                await api.delete(`/usuarios/${usuario.id}/seguir/${idusuario}`)
+                await api.delete(`/usuarios/${idusuario}/seguir`)
                 setSeguidos(prev => prev.filter(id => id !== idusuario))
             } else {
-                await api.post(`/usuarios/${usuario.id}/seguir/${idusuario}`)
+                await api.post(`/usuarios/${idusuario}/seguir`)
                 setSeguidos(prev => [...prev, idusuario])
             }
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }

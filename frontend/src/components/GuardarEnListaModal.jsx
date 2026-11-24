@@ -58,7 +58,7 @@ export default function GuardarEnListaModal({ idlibro, onClose }) {
         if (!nombre) return
         setError('')
         try {
-            const res = await api.post(`/listas/usuario/${usuario.id}`, { nombre, esPublica: true })
+            const res = await api.post(`/listas`, { nombre, esPublica: true })
             await api.post(`/listas/${res.data.idlista}/libros/${idlibro}`)
             setNombreNueva('')
             setCreando(false)

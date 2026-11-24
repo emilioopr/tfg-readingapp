@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 /** Like de un usuario a una cita. Guarda la fecha para poder ordenar el muro por las más likeadas de la semana. */
 @Entity
 @Table(name = "like_cita",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idanotacion"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idanotacion"}),
+        indexes = @Index(name = "idx_like_cita_anotacion", columnList = "idanotacion"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class LikeCita {
 

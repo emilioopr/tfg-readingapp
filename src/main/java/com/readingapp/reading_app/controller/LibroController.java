@@ -115,17 +115,15 @@ public class LibroController {
 
     // === FAVORITOS ===
 
-    @PostMapping("/{libroId}/favorito/{usuarioId}")
-    public ResponseEntity<Void> agregarFavorito(@PathVariable Long libroId, @PathVariable Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        libroService.agregarFavorito(usuarioId, libroId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/{libroId}/favorito")
+    public ResponseEntity<Void> agregarFavorito(@PathVariable Long libroId) {
+        libroService.agregarFavorito(SecurityUtils.getUsuarioAutenticadoId(), libroId);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{libroId}/favorito/{usuarioId}")
-    public ResponseEntity<Void> quitarFavorito(@PathVariable Long libroId, @PathVariable Long usuarioId) {
-        SecurityUtils.validarUsuario(usuarioId);
-        libroService.quitarFavorito(usuarioId, libroId);
+    @DeleteMapping("/{libroId}/favorito")
+    public ResponseEntity<Void> quitarFavorito(@PathVariable Long libroId) {
+        libroService.quitarFavorito(SecurityUtils.getUsuarioAutenticadoId(), libroId);
         return ResponseEntity.noContent().build();
     }
 

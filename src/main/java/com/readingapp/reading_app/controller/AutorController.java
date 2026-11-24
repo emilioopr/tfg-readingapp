@@ -50,17 +50,15 @@ public class AutorController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{idautor}/seguir/{idusuario}")
-    public ResponseEntity<Void> seguirAutor(@PathVariable Long idautor, @PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        autorService.seguirAutor(idautor, idusuario);
-        return ResponseEntity.ok().build();
+    @PostMapping("/{idautor}/seguir")
+    public ResponseEntity<Void> seguirAutor(@PathVariable Long idautor) {
+        autorService.seguirAutor(idautor, SecurityUtils.getUsuarioAutenticadoId());
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{idautor}/seguir/{idusuario}")
-    public ResponseEntity<Void> dejarDeSeguirAutor(@PathVariable Long idautor, @PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        autorService.dejarDeSeguirAutor(idautor, idusuario);
+    @DeleteMapping("/{idautor}/seguir")
+    public ResponseEntity<Void> dejarDeSeguirAutor(@PathVariable Long idautor) {
+        autorService.dejarDeSeguirAutor(idautor, SecurityUtils.getUsuarioAutenticadoId());
         return ResponseEntity.noContent().build();
     }
 }

@@ -111,7 +111,7 @@ export default function LibroDetalle() {
         if (!usuario) return
         try {
             // Tus reseñas (también las privadas), no solo las públicas del libro
-            const res = await api.get(`/resenas/usuario/${usuario.id}?size=200`)
+            const res = await api.get(`/resenas/mias?size=200`)
             const todas = res.data.content || res.data || []
             setMisResenas(todas.filter(r => r.idlibro === parseInt(id)))
         } catch (err) { console.error('Error:', err) }
@@ -157,7 +157,7 @@ export default function LibroDetalle() {
     const toggleFavorito = async () => {
         try {
             if (esFavorito) {
-                await api.delete(`/libros/${id}/favorito/${usuario.id}`)
+                await api.delete(`/libros/${id}/favorito`)
                 setEsFavorito(false)
                 setNumFavoritos(prev => prev - 1)
             } else {
@@ -165,7 +165,7 @@ export default function LibroDetalle() {
                     avisar('Ya tienes 5 libros favoritos. Quita uno para añadir otro.', 'info')
                     return
                 }
-                await api.post(`/libros/${id}/favorito/${usuario.id}`)
+                await api.post(`/libros/${id}/favorito`)
                 setEsFavorito(true)
                 setNumFavoritos(prev => prev + 1)
             }
@@ -174,7 +174,7 @@ export default function LibroDetalle() {
 
     const marcarLeyendo = async () => {
         try {
-            await api.post('/seguimientos', { estado: 'LEYENDO', idusuario: usuario.id, idlibro: parseInt(id) })
+            await api.post('/seguimientos', { estado: 'LEYENDO', idlibro: parseInt(id) })
             setEstadoLibro('LEYENDO')
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
         navigate('/')
@@ -182,7 +182,7 @@ export default function LibroDetalle() {
 
     const agregarAWishlist = async () => {
         try {
-            await api.post('/seguimientos', { estado: 'PENDIENTE', idusuario: usuario.id, idlibro: parseInt(id) })
+            await api.post('/seguimientos', { estado: 'PENDIENTE', idlibro: parseInt(id) })
             setEstadoLibro('PENDIENTE')
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }

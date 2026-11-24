@@ -62,7 +62,6 @@ class SeguimientoServiceTest {
 
     private SeguimientoDTO.CreateRequest peticion(EstadoLectura estado, Integer pagina) {
         SeguimientoDTO.CreateRequest request = new SeguimientoDTO.CreateRequest();
-        request.setIdusuario(ID_USUARIO);
         request.setIdlibro(ID_LIBRO);
         request.setEstado(estado);
         request.setNumPagina(pagina);
@@ -97,7 +96,7 @@ class SeguimientoServiceTest {
         void anadirSinEstadoPrevio() {
             sinSeguimientoPrevio();
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.PENDIENTE, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.PENDIENTE, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.PENDIENTE);
             assertThat(res.getNumPagina()).isZero();
@@ -109,7 +108,7 @@ class SeguimientoServiceTest {
         void noDuplicarPendiente() {
             ultimoSeguimiento(EstadoLectura.PENDIENTE, 0);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.PENDIENTE, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.PENDIENTE, null)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("ya está en tu lista");
             verify(seguimientoRepository, never()).save(any());
@@ -120,7 +119,7 @@ class SeguimientoServiceTest {
         void noPendienteSiLeyendo() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 50);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.PENDIENTE, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.PENDIENTE, null)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -129,7 +128,7 @@ class SeguimientoServiceTest {
         void pendienteTrasLeido() {
             ultimoSeguimiento(EstadoLectura.LEIDO, TOTAL_PAGINAS);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.PENDIENTE, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.PENDIENTE, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.PENDIENTE);
         }
@@ -147,7 +146,7 @@ class SeguimientoServiceTest {
             sinSeguimientoPrevio();
             librosLeyendo(0);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.LEYENDO);
             assertThat(res.getNumPagina()).isZero();
@@ -160,7 +159,7 @@ class SeguimientoServiceTest {
             ultimoSeguimiento(EstadoLectura.PENDIENTE, 0);
             librosLeyendo(3);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.LEYENDO);
         }
@@ -171,7 +170,7 @@ class SeguimientoServiceTest {
             ultimoSeguimiento(EstadoLectura.ABANDONADO, 120);
             librosLeyendo(2);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.LEYENDO);
         }
@@ -181,7 +180,7 @@ class SeguimientoServiceTest {
         void noEmpezarDosVeces() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 40);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, null)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Ya estás leyendo");
         }
@@ -191,7 +190,7 @@ class SeguimientoServiceTest {
         void avanzarPagina() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 40);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, 90));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, 90));
 
             assertThat(res.getNumPagina()).isEqualTo(90);
             assertThat(res.getPorcentaje()).isEqualTo(30.0);
@@ -202,7 +201,7 @@ class SeguimientoServiceTest {
         void noRetrocederPagina() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 100);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, 100)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, 100)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("mayor que 100");
         }
@@ -212,7 +211,7 @@ class SeguimientoServiceTest {
         void noSuperarTotal() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 100);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, TOTAL_PAGINAS + 1)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, TOTAL_PAGINAS + 1)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("total de páginas");
         }
@@ -223,7 +222,7 @@ class SeguimientoServiceTest {
             sinSeguimientoPrevio();
             librosLeyendo(10);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, null)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("10 libros");
             verify(seguimientoRepository, never()).save(any());
@@ -235,7 +234,7 @@ class SeguimientoServiceTest {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 50);
             lenient().when(seguimientoRepository.countLibrosLeyendoActualmente(ID_USUARIO)).thenReturn(10L);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, 80));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, 80));
 
             assertThat(res.getNumPagina()).isEqualTo(80);
         }
@@ -252,7 +251,7 @@ class SeguimientoServiceTest {
         void terminarLibro() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 250);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEIDO, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEIDO, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.LEIDO);
             assertThat(res.getNumPagina()).isEqualTo(TOTAL_PAGINAS);
@@ -264,7 +263,7 @@ class SeguimientoServiceTest {
         void noLeidoSinLeyendo() {
             sinSeguimientoPrevio();
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEIDO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEIDO, null)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Debes estar leyendo");
         }
@@ -274,7 +273,7 @@ class SeguimientoServiceTest {
         void noLeidoDesdePendiente() {
             ultimoSeguimiento(EstadoLectura.PENDIENTE, 0);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEIDO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEIDO, null)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -283,7 +282,7 @@ class SeguimientoServiceTest {
         void abandonarConservaPagina() {
             ultimoSeguimiento(EstadoLectura.LEYENDO, 120);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.ABANDONADO, null));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.ABANDONADO, null));
 
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.ABANDONADO);
             assertThat(res.getNumPagina()).isEqualTo(120);
@@ -294,7 +293,7 @@ class SeguimientoServiceTest {
         void noAbandonarSinLeyendo() {
             ultimoSeguimiento(EstadoLectura.PENDIENTE, 0);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.ABANDONADO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.ABANDONADO, null)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -309,9 +308,8 @@ class SeguimientoServiceTest {
         @DisplayName("Falla si el usuario no existe")
         void usuarioInexistente() {
             SeguimientoDTO.CreateRequest request = peticion(EstadoLectura.LEYENDO, null);
-            request.setIdusuario(999L);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(request))
+            assertThatThrownBy(() -> seguimientoService.registrar(999L, request))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("Usuario");
         }
@@ -322,7 +320,7 @@ class SeguimientoServiceTest {
             SeguimientoDTO.CreateRequest request = peticion(EstadoLectura.LEYENDO, null);
             request.setIdlibro(999L);
 
-            assertThatThrownBy(() -> seguimientoService.registrar(request))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, request))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("Libro");
         }
@@ -332,7 +330,7 @@ class SeguimientoServiceTest {
         void noRecalculaRetosSiFalla() {
             sinSeguimientoPrevio();
 
-            assertThatThrownBy(() -> seguimientoService.registrar(peticion(EstadoLectura.LEIDO, null)))
+            assertThatThrownBy(() -> seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEIDO, null)))
                     .isInstanceOf(IllegalArgumentException.class);
             verify(retoService, never()).recalcularRetosActivosDeUsuario(anyLong());
         }
@@ -343,7 +341,7 @@ class SeguimientoServiceTest {
             libro.setNumPaginas(null);
             ultimoSeguimiento(EstadoLectura.LEYENDO, 10);
 
-            SeguimientoDTO.Response res = seguimientoService.registrar(peticion(EstadoLectura.LEYENDO, 50));
+            SeguimientoDTO.Response res = seguimientoService.registrar(ID_USUARIO, peticion(EstadoLectura.LEYENDO, 50));
 
             assertThat(res.getPorcentaje()).isNull();
         }

@@ -10,8 +10,6 @@ public class SesionLecturaDTO {
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
     public static class CreateRequest {
-        @NotNull(message = "El usuario es obligatorio")
-        private Long idusuario;
         @NotNull @Min(1)
         @Max(value = SesionLecturaDTO.MAX_MINUTOS_SESION, message = "Una sesión de lectura no puede durar más de 12 horas")
         private Integer duracionMinutos;

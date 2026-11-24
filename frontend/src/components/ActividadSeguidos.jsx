@@ -81,7 +81,7 @@ export default function ActividadSeguidos() {
 
     useEffect(() => {
         if (!usuario) return
-        api.get(`/actividad/seguidos/${usuario.id}?page=0&size=${EN_INICIO}`)
+        api.get(`/actividad/seguidos?page=0&size=${EN_INICIO}`)
             .then(res => setDatos(res.data))
             // Si falla no se muestra la sección (mejor que un "no hay actividad" que no es cierto)
             .catch(err => { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar la actividad de las personas que sigues.') })

@@ -31,11 +31,11 @@ export default function ResenaDetalle() {
     const comprobarLike = useCallback(async () => {
         if (eliminada) return
         try {
-            const res = await api.get(`/resenas/likes/${usuario.id}`)
+            const res = await api.get(`/resenas/likes`)
             const likes = res.data.content || res.data || []
             setLiked(likes.some(r => r.idresena === parseInt(id)))
         } catch (err) { console.error('Error:', err) }
-    }, [eliminada, id, usuario])
+    }, [eliminada, id])
 
     useEffect(() => { cargarResena() }, [cargarResena, id])
     const autorResena = resena?.idusuario
@@ -48,11 +48,11 @@ export default function ResenaDetalle() {
     const toggleLike = async () => {
         try {
             if (liked) {
-                await api.delete(`/resenas/${id}/like/${usuario.id}`)
+                await api.delete(`/resenas/${id}/like`)
                 setLiked(false)
                 setResena(prev => ({ ...prev, numLikes: (prev.numLikes || 1) - 1 }))
             } else {
-                await api.post(`/resenas/${id}/like/${usuario.id}`)
+                await api.post(`/resenas/${id}/like`)
                 setLiked(true)
                 setResena(prev => ({ ...prev, numLikes: (prev.numLikes || 0) + 1 }))
             }

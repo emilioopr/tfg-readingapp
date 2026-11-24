@@ -18,7 +18,7 @@ export function NotificacionesProvider({ children }) {
     const refrescar = useCallback(async () => {
         if (!usuario) return
         try {
-            const res = await api.get(`/notificaciones/usuario/${usuario.id}/no-leidas?size=20`)
+            const res = await api.get(`/notificaciones/no-leidas?size=20`)
             setNoLeidas(res.data.content || res.data || [])
             setCargadas(true)
         } catch (err) {

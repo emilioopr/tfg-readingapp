@@ -9,7 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "resena")
+@Table(name = "resena", indexes = {
+        @Index(name = "idx_resena_libro", columnList = "idlibro"),
+        @Index(name = "idx_resena_usuario", columnList = "idusuario")})
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Resena {
 
@@ -39,11 +41,11 @@ public class Resena {
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuario", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idlibro", nullable = false)
     private Libro libro;
 

@@ -34,8 +34,8 @@ public class ResenaService {
     private final ValoracionRepository valoracionRepository;
 
     @Transactional
-    public ResenaDTO.Response crear(ResenaDTO.CreateRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.getIdusuario())
+    public ResenaDTO.Response crear(Long idusuario, ResenaDTO.CreateRequest request) {
+        Usuario usuario = usuarioRepository.findById(idusuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         Libro libro = libroRepository.findById(request.getIdlibro())
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));

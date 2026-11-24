@@ -23,8 +23,7 @@ public class AnotacionController {
 
     @PostMapping
     public ResponseEntity<AnotacionDTO.Response> crear(@Valid @RequestBody AnotacionDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(request.getIdusuario());
-        return ResponseEntity.status(HttpStatus.CREATED).body(anotacionService.crear(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(anotacionService.crear(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/{id}")

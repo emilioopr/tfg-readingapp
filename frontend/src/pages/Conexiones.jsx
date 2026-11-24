@@ -37,10 +37,10 @@ export default function Conexiones() {
     const toggleSeguir = async (otro) => {
         try {
             if (idsSeguidos.has(otro.idusuario)) {
-                await api.delete(`/usuarios/${usuario.id}/seguir/${otro.idusuario}`)
+                await api.delete(`/usuarios/${otro.idusuario}/seguir`)
                 setSeguidos(prev => prev.filter(u => u.idusuario !== otro.idusuario))
             } else {
-                await api.post(`/usuarios/${usuario.id}/seguir/${otro.idusuario}`)
+                await api.post(`/usuarios/${otro.idusuario}/seguir`)
                 setSeguidos(prev => [...prev, otro])
             }
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }

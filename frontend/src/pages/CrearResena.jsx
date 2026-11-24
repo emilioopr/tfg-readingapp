@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import { Lightning, X } from '@phosphor-icons/react'
 import Portada from '../components/Portada'
@@ -14,7 +13,6 @@ export default function CrearResena() {
     const [searchParams] = useSearchParams()
     const idresena = searchParams.get('editar')
     const esEdicion = !!idresena
-    const { usuario } = useAuth()
     const navigate = useNavigate()
     const [libro, setLibro] = useState(null)
     const [texto, setTexto] = useState('')
@@ -92,7 +90,7 @@ export default function CrearResena() {
                 await api.put(`/resenas/${idresena}`, { texto, puntuacion, ritmo, etiquetas, esPublica, tieneSpoiler })
                 navigate(`/resena/${idresena}`)
             } else {
-                await api.post('/resenas', { texto, puntuacion, ritmo, etiquetas, esPublica, tieneSpoiler, leidopreviamente: leidoPreviamente, idlibro: parseInt(idlibro), idusuario: usuario.id })
+                await api.post('/resenas', { texto, puntuacion, ritmo, etiquetas, esPublica, tieneSpoiler, leidopreviamente: leidoPreviamente, idlibro: parseInt(idlibro) })
                 navigate(`/libro/${idlibro}`)
             }
         } catch (err) { setError(err.response?.data?.mensaje || (esEdicion ? 'Error al actualizar' : 'Error al crear la reseña')); setEnviando(false) }

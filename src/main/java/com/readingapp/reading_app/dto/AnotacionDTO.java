@@ -16,8 +16,6 @@ public class AnotacionDTO {
         private Boolean tieneSpoiler;
         @NotNull(message = "El libro es obligatorio")
         private Long idlibro;
-        @NotNull(message = "El usuario es obligatorio")
-        private Long idusuario;
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

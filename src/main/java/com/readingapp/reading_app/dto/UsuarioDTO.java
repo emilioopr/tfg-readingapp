@@ -15,7 +15,7 @@ public class UsuarioDTO {
         private String email;
 
         @NotBlank(message = "La contraseña es obligatoria")
-        @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+        @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
         private String password;
     }
 
@@ -31,7 +31,7 @@ public class UsuarioDTO {
         @NotBlank(message = "La contraseña actual es obligatoria")
         private String actual;
         @NotBlank(message = "La nueva contraseña es obligatoria")
-        @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+        @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
         private String nueva;
     }
 

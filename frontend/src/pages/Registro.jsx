@@ -42,9 +42,9 @@ export default function Registro() {
                 </div>
                 <div className="mb-8">
                     <label className="etiqueta block mb-2">Contraseña</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6}
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8}
                            className="campo" required />
-                    <p className="text-texto-ter text-xs mt-1.5">Mínimo 6 caracteres</p>
+                    <p className="text-texto-ter text-xs mt-1.5">Mínimo 8 caracteres</p>
                 </div>
                 <button type="submit" className="btn-acento w-full py-2.5">Registrarse</button>
                 <p className="text-texto-sec text-sm mt-6 text-center">

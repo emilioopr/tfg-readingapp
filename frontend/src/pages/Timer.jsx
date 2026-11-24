@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import { useRacha } from '../context/RachaContext'
 import { useNotificaciones } from '../context/NotificacionesContext'
 import api from '../api/axios'
@@ -9,7 +8,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 export default function Timer() {
     const { avisar } = useAvisos()
-    const { usuario } = useAuth()
 
     const [modo, setModo] = useState('libre')
     const [objetivoMinutos, setObjetivoMinutos] = useState(30)
@@ -146,7 +144,6 @@ export default function Timer() {
         setGuardando(true)
         try {
             await api.post('/sesiones-lectura', {
-                idusuario: usuario.id,
                 duracionMinutos: minutosLeidos,
             })
             refrescarRacha()

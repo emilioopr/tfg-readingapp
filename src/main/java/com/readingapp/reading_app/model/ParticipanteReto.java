@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "participante_reto",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_reto", "id_usuario"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_reto", "id_usuario"}),
+        indexes = @Index(name = "idx_participante_usuario", columnList = "id_usuario"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ParticipanteReto {
 
@@ -32,11 +33,11 @@ public class ParticipanteReto {
     @Column(name = "fecha_cumplimiento")
     private LocalDateTime fechaCumplimiento;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_reto", nullable = false)
     private Reto reto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 }

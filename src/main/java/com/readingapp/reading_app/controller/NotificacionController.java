@@ -19,42 +19,36 @@ public class NotificacionController {
 
     private final NotificacionService notificacionService;
 
-    @GetMapping("/usuario/{idusuario}")
-    public ResponseEntity<List<NotificacionDTO.Response>> obtenerTodas(@PathVariable Long idusuario, @PageableDefault(size = 20) Pageable pageable) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(notificacionService.obtenerTodas(idusuario, pageable));
+    @GetMapping
+    public ResponseEntity<List<NotificacionDTO.Response>> obtenerTodas(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(notificacionService.obtenerTodas(SecurityUtils.getUsuarioAutenticadoId(), pageable));
     }
 
-    @GetMapping("/usuario/{idusuario}/no-leidas")
-    public ResponseEntity<List<NotificacionDTO.Response>> obtenerNoLeidas(@PathVariable Long idusuario, @PageableDefault(size = 20) Pageable pageable) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(notificacionService.obtenerNoLeidas(idusuario, pageable));
+    @GetMapping("/no-leidas")
+    public ResponseEntity<List<NotificacionDTO.Response>> obtenerNoLeidas(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(notificacionService.obtenerNoLeidas(SecurityUtils.getUsuarioAutenticadoId(), pageable));
     }
 
-    @GetMapping("/usuario/{idusuario}/tipo/{tipo}")
-    public ResponseEntity<List<NotificacionDTO.Response>> obtenerPorTipo(@PathVariable Long idusuario,
-                                                                         @PathVariable TipoNotificacion tipo, @PageableDefault(size = 20) Pageable pageable) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(notificacionService.obtenerPorTipo(idusuario, tipo, pageable));
+    @GetMapping("/tipo/{tipo}")
+    public ResponseEntity<List<NotificacionDTO.Response>> obtenerPorTipo(@PathVariable TipoNotificacion tipo, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(notificacionService.obtenerPorTipo(SecurityUtils.getUsuarioAutenticadoId(), tipo, pageable));
     }
 
-    @GetMapping("/usuario/{idusuario}/contador")
-    public ResponseEntity<NotificacionDTO.ContadorResponse> contarNoLeidas(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(notificacionService.contarNoLeidas(idusuario));
+    @GetMapping("/contador")
+    public ResponseEntity<NotificacionDTO.ContadorResponse> contarNoLeidas() {
+        return ResponseEntity.ok(notificacionService.contarNoLeidas(SecurityUtils.getUsuarioAutenticadoId()));
     }
 
     @PutMapping("/{id}/leida")
     public ResponseEntity<Void> marcarLeida(@PathVariable Long id) {
         notificacionService.marcarLeida(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/usuario/{idusuario}/leer-todas")
-    public ResponseEntity<Void> marcarTodasLeidas(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        notificacionService.marcarTodasLeidas(idusuario);
-        return ResponseEntity.ok().build();
+    @PutMapping("/leer-todas")
+    public ResponseEntity<Void> marcarTodasLeidas() {
+        notificacionService.marcarTodasLeidas(SecurityUtils.getUsuarioAutenticadoId());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

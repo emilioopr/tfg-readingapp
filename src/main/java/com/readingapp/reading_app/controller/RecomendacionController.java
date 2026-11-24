@@ -20,32 +20,28 @@ public class RecomendacionController {
 
     @PostMapping
     public ResponseEntity<RecomendacionDTO.Response> crear(@Valid @RequestBody RecomendacionDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(request.getIdusuarioEmisor());
-        return ResponseEntity.status(HttpStatus.CREATED).body(recomendacionService.crear(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recomendacionService.crear(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
-    @GetMapping("/recibidas/{idusuario}")
-    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerRecibidas(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(recomendacionService.obtenerRecibidas(idusuario));
+    @GetMapping("/recibidas")
+    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerRecibidas() {
+        return ResponseEntity.ok(recomendacionService.obtenerRecibidas(SecurityUtils.getUsuarioAutenticadoId()));
     }
 
-    @GetMapping("/enviadas/{idusuario}")
-    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerEnviadas(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(recomendacionService.obtenerEnviadas(idusuario));
+    @GetMapping("/enviadas")
+    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerEnviadas() {
+        return ResponseEntity.ok(recomendacionService.obtenerEnviadas(SecurityUtils.getUsuarioAutenticadoId()));
     }
 
-    @GetMapping("/no-vistas/{idusuario}")
-    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerNoVistas(@PathVariable Long idusuario) {
-        SecurityUtils.validarUsuario(idusuario);
-        return ResponseEntity.ok(recomendacionService.obtenerNoVistas(idusuario));
+    @GetMapping("/no-vistas")
+    public ResponseEntity<List<RecomendacionDTO.Response>> obtenerNoVistas() {
+        return ResponseEntity.ok(recomendacionService.obtenerNoVistas(SecurityUtils.getUsuarioAutenticadoId()));
     }
 
     @PutMapping("/{id}/vista")
     public ResponseEntity<Void> marcarVista(@PathVariable Long id) {
         recomendacionService.marcarVista(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

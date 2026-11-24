@@ -92,7 +92,6 @@ export default function Inicio() {
         try {
             await api.post('/seguimientos', {
                 estado: 'LEYENDO',
-                idusuario: usuario.id,
                 idlibro: libroActual.idlibro,
                 numPagina: parseInt(nuevaPagina),
             })
@@ -103,7 +102,6 @@ export default function Inicio() {
             if (libroActual.totalPaginas && parseInt(nuevaPagina) >= libroActual.totalPaginas) {
                 await api.post('/seguimientos', {
                     estado: 'LEIDO',
-                    idusuario: usuario.id,
                     idlibro: libroActual.idlibro,
                 })
                 cargarRetos()
@@ -126,7 +124,6 @@ export default function Inicio() {
         try {
             await api.post('/seguimientos', {
                 estado: 'LEIDO',
-                idusuario: usuario.id,
                 idlibro: libroActual.idlibro,
             })
             refrescarRacha() // terminar un libro también cuenta como día de lectura
@@ -142,7 +139,6 @@ export default function Inicio() {
         try {
             await api.post('/seguimientos', {
                 estado: 'ABANDONADO',
-                idusuario: usuario.id,
                 idlibro: libroActual.idlibro,
             })
             if (leyendoIndex >= leyendo.length - 1) setLeyendoIndex(Math.max(0, leyendoIndex - 1))

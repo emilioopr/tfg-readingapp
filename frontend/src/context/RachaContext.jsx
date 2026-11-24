@@ -13,7 +13,7 @@ export function RachaProvider({ children }) {
     const cargar = useCallback(async () => {
         if (!usuario) return null
         try {
-            const res = await api.post(`/racha/usuario/${usuario.id}/actualizar`)
+            const res = await api.post(`/racha/actualizar`)
             rachaRef.current = res.data
             setRacha(res.data)
             return res.data

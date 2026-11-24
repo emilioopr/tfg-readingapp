@@ -28,8 +28,8 @@ public class SeguimientoService {
     private final RetoService retoService;
 
     @Transactional
-    public SeguimientoDTO.Response registrar(SeguimientoDTO.CreateRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.getIdusuario())
+    public SeguimientoDTO.Response registrar(Long idusuario, SeguimientoDTO.CreateRequest request) {
+        Usuario usuario = usuarioRepository.findById(idusuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         Libro libro = libroRepository.findById(request.getIdlibro())
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));

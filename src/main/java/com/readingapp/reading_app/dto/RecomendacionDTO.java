@@ -10,8 +10,6 @@ public class RecomendacionDTO {
         private String mensaje;
         @NotNull(message = "El receptor es obligatorio")
         private Long idusuarioReceptor;
-        @NotNull(message = "El emisor es obligatorio")
-        private Long idusuarioEmisor;
         @NotNull(message = "El libro es obligatorio")
         private Long idlibro;
     }

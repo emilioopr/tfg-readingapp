@@ -21,8 +21,8 @@ public class SesionLecturaService {
     private final RetoService retoService;
 
     @Transactional
-    public SesionLecturaDTO.Response registrar(SesionLecturaDTO.CreateRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.getIdusuario())
+    public SesionLecturaDTO.Response registrar(Long idusuario, SesionLecturaDTO.CreateRequest request) {
+        Usuario usuario = usuarioRepository.findById(idusuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         int minutos = request.getDuracionMinutos() != null ? request.getDuracionMinutos() : 0;
         if (minutos < 1 || minutos > SesionLecturaDTO.MAX_MINUTOS_SESION) {
@@ -41,7 +41,7 @@ public class SesionLecturaService {
         sesion = sesionLecturaRepository.save(sesion);
 
         // Recalcular retos de HORAS activos
-        retoService.recalcularRetosActivosDeUsuario(request.getIdusuario());
+        retoService.recalcularRetosActivosDeUsuario(idusuario);
 
         return toResponse(sesion);
     }

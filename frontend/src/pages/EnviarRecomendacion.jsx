@@ -36,7 +36,7 @@ export default function EnviarRecomendacion() {
         e.preventDefault(); setError('')
         if (!receptorId) { setError('Selecciona un usuario'); return }
         try {
-            await api.post('/recomendaciones', { idlibro: parseInt(idlibro), idusuarioEmisor: usuario.id, idusuarioReceptor: parseInt(receptorId), mensaje })
+            await api.post('/recomendaciones', { idlibro: parseInt(idlibro), idusuarioReceptor: parseInt(receptorId), mensaje })
             navigate(`/libro/${idlibro}`)
         } catch (err) { setError(err.response?.data?.mensaje || 'Error al enviar') }
     }

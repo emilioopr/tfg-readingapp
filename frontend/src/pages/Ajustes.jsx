@@ -74,7 +74,6 @@ export default function Ajustes() {
 }
 
 function CambiarPassword() {
-    const { usuario } = useAuth()
     const [actual, setActual] = useState('')
     const [nueva, setNueva] = useState('')
     const [repetida, setRepetida] = useState('')
@@ -86,11 +85,11 @@ function CambiarPassword() {
         e.preventDefault()
         setError('')
         setExito('')
-        if (nueva.length < 6) { setError('La nueva contraseña debe tener al menos 6 caracteres'); return }
+        if (nueva.length < 8) { setError('La nueva contraseña debe tener al menos 8 caracteres'); return }
         if (nueva !== repetida) { setError('Las contraseñas nuevas no coinciden'); return }
         setGuardando(true)
         try {
-            await api.put(`/usuarios/${usuario.id}/password`, { actual, nueva })
+            await api.put(`/usuarios/yo/password`, { actual, nueva })
             setExito('Contraseña cambiada')
             setActual(''); setNueva(''); setRepetida('')
         } catch (err) {
@@ -104,7 +103,7 @@ function CambiarPassword() {
         <form onSubmit={cambiar} className="space-y-3 max-w-sm">
             <input type="password" placeholder="Contraseña actual" aria-label="Contraseña actual" value={actual} onChange={(e) => setActual(e.target.value)}
                    autoComplete="current-password" required className={estiloInput} />
-            <input type="password" placeholder="Nueva contraseña (mínimo 6 caracteres)" aria-label="Nueva contraseña" value={nueva} onChange={(e) => setNueva(e.target.value)}
+            <input type="password" placeholder="Nueva contraseña (mínimo 8 caracteres)" aria-label="Nueva contraseña" value={nueva} onChange={(e) => setNueva(e.target.value)}
                    autoComplete="new-password" required className={estiloInput} />
             <input type="password" placeholder="Repite la nueva contraseña" aria-label="Repite la nueva contraseña" value={repetida} onChange={(e) => setRepetida(e.target.value)}
                    autoComplete="new-password" required className={estiloInput} />
@@ -119,7 +118,7 @@ function CambiarPassword() {
 
 /** Baja de la cuenta: pide la contraseña y borra todos los datos del usuario. */
 function EliminarCuenta() {
-    const { usuario, logout } = useAuth()
+    const { logout } = useAuth()
     const [abierto, setAbierto] = useState(false)
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -130,7 +129,7 @@ function EliminarCuenta() {
         setError('')
         setBorrando(true)
         try {
-            await api.post(`/usuarios/${usuario.id}/eliminar-cuenta`, { password })
+            await api.post(`/usuarios/yo/eliminar-cuenta`, { password })
             logout() // limpia la sesión y vuelve a la portada
         } catch (err) {
             setError(err.response?.data?.mensaje || 'No se ha podido eliminar la cuenta')

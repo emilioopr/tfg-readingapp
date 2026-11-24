@@ -26,12 +26,12 @@ public class RecomendacionService {
     private final NotificacionService notificacionService;
 
     @Transactional
-    public RecomendacionDTO.Response crear(RecomendacionDTO.CreateRequest request) {
-        if (request.getIdusuarioEmisor().equals(request.getIdusuarioReceptor())) {
+    public RecomendacionDTO.Response crear(Long idemisor, RecomendacionDTO.CreateRequest request) {
+        if (idemisor.equals(request.getIdusuarioReceptor())) {
             throw new IllegalArgumentException("No puedes recomendarte un libro a ti mismo");
         }
 
-        Usuario emisor = usuarioRepository.findById(request.getIdusuarioEmisor())
+        Usuario emisor = usuarioRepository.findById(idemisor)
                 .orElseThrow(() -> new EntityNotFoundException("Emisor no encontrado"));
         Usuario receptor = usuarioRepository.findById(request.getIdusuarioReceptor())
                 .orElseThrow(() -> new EntityNotFoundException("Receptor no encontrado"));

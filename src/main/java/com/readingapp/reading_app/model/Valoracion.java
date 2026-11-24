@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "valoracion",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlibro"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlibro"}),
+        indexes = @Index(name = "idx_valoracion_libro", columnList = "idlibro"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Valoracion {
 

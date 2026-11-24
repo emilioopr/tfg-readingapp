@@ -18,11 +18,9 @@ public class ListaController {
 
     private final ListaService listaService;
 
-    @PostMapping("/usuario/{usuarioId}")
-    public ResponseEntity<ListaDTO.Response> crear(@PathVariable Long usuarioId,
-                                                   @Valid @RequestBody ListaDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(usuarioId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(listaService.crear(usuarioId, request));
+    @PostMapping
+    public ResponseEntity<ListaDTO.Response> crear(@Valid @RequestBody ListaDTO.CreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(listaService.crear(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/{id}")
@@ -82,7 +80,7 @@ public class ListaController {
     @PostMapping("/{listaId}/libros/{libroId}")
     public ResponseEntity<Void> agregarLibro(@PathVariable Long listaId, @PathVariable Long libroId) {
         listaService.agregarLibro(listaId, libroId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{listaId}/libros/{libroId}")

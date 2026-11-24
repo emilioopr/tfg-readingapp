@@ -17,11 +17,11 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
 
     const comprobarLike = useCallback(async () => {
         try {
-            const res = await api.get(`/resenas/likes/${usuario.id}`)
+            const res = await api.get(`/resenas/likes`)
             const likes = res.data.content || res.data || []
             setLiked(likes.some(r => r.idresena === resenaInicial.idresena))
         } catch (err) { console.error('Error:', err) }
-    }, [resenaInicial.idresena, usuario])
+    }, [resenaInicial.idresena])
 
     useEffect(() => {
         if (usuario && resenaInicial.idusuario !== usuario.id) {
@@ -34,11 +34,11 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
         if (!usuario || resena.idusuario === usuario.id) return
         try {
             if (liked) {
-                await api.delete(`/resenas/${resena.idresena}/like/${usuario.id}`)
+                await api.delete(`/resenas/${resena.idresena}/like`)
                 setLiked(false)
                 setResena(prev => ({ ...prev, numLikes: (prev.numLikes || 1) - 1 }))
             } else {
-                await api.post(`/resenas/${resena.idresena}/like/${usuario.id}`)
+                await api.post(`/resenas/${resena.idresena}/like`)
                 setLiked(true)
                 setResena(prev => ({ ...prev, numLikes: (prev.numLikes || 0) + 1 }))
             }

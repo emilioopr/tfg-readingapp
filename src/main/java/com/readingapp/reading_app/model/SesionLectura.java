@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 /** Sesión de lectura del temporizador: solo tiempo (cuenta para la racha y los retos de horas), sin libro. */
 @Entity
-@Table(name = "sesion_lectura")
+@Table(name = "sesion_lectura", indexes = @Index(name = "idx_sesion_usuario", columnList = "id_usuario, inicio"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class SesionLectura {
 
@@ -22,7 +22,7 @@ public class SesionLectura {
     @Column(name = "duracion_minutos")
     private Integer duracionMinutos;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 }

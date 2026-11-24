@@ -22,8 +22,7 @@ public class SesionLecturaController {
     @PostMapping
     public ResponseEntity<SesionLecturaDTO.Response> registrar(
             @Valid @RequestBody SesionLecturaDTO.CreateRequest request) {
-        SecurityUtils.validarUsuario(request.getIdusuario());
-        return ResponseEntity.status(HttpStatus.CREATED).body(sesionLecturaService.registrar(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(sesionLecturaService.registrar(SecurityUtils.getUsuarioAutenticadoId(), request));
     }
 
     @GetMapping("/usuario/{idusuario}")

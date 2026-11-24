@@ -223,6 +223,17 @@ export default function Perfil() {
                                     {racha.racha === 1 ? 'día' : 'días'} seguidos leyendo
                                 </span>
                             )}
+                            {/* Insignias: hitos de mejor racha alcanzados (7, 30, 100 y 365 días) */}
+                            {racha?.insignias?.length > 0 && (
+                                <ul className="flex flex-wrap gap-2" aria-label="Insignias de racha">
+                                    {racha.insignias.map(dias => (
+                                        <li key={dias} title={`Racha de ${dias} días alcanzada`}
+                                            className="text-xs border border-acento text-acento rounded-full px-2.5 py-0.5">
+                                            {dias === 365 ? '1 año' : `${dias} días`}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
                 </div>

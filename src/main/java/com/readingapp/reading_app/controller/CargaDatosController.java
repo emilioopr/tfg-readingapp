@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,15 +30,40 @@ public class CargaDatosController {
         return ResponseEntity.ok(Map.of("query", query, "importados", importados));
     }
 
+    // Estado de la última carga masiva. shortcut: en memoria y una sola a la vez; vale con un único servidor
+    private volatile Map<String, Object> estadoCarga = Map.of("enCurso", false);
+
+    /** Lanza la carga en segundo plano (puede tardar minutos) y responde al momento; el progreso se consulta en /masiva/estado. */
     @PostMapping("/masiva")
-    public ResponseEntity<Map<String, Integer>> importarMasiva(
+    public synchronized ResponseEntity<Map<String, Object>> importarMasiva(
             @RequestBody List<String> categorias,
             @RequestParam(defaultValue = "50") int cantidad,
             @RequestParam(defaultValue = "es") String idioma) {
 
         SecurityUtils.validarAdmin();
-        Map<String, Integer> resultado = googleBooksService.importarMultiplesCategorias(categorias, cantidad, idioma);
-        return ResponseEntity.ok(resultado);
+        if (Boolean.TRUE.equals(estadoCarga.get("enCurso"))) {
+            throw new IllegalArgumentException("Ya hay una carga masiva en marcha");
+        }
+        estadoCarga = Map.of("enCurso", true, "categorias", categorias.size());
+        Thread.ofVirtual().start(() -> {
+            Map<String, Object> fin = new LinkedHashMap<>();
+            fin.put("enCurso", false);
+            try {
+                Map<String, Integer> resultado = googleBooksService.importarMultiplesCategorias(categorias, cantidad, idioma);
+                fin.put("resultado", resultado);
+                fin.put("importados", resultado.values().stream().mapToInt(Integer::intValue).sum());
+            } catch (Exception e) {
+                fin.put("error", "La carga se ha interrumpido: " + e.getMessage());
+            }
+            estadoCarga = fin;
+        });
+        return ResponseEntity.accepted().body(estadoCarga);
+    }
+
+    @GetMapping("/masiva/estado")
+    public ResponseEntity<Map<String, Object>> estadoCargaMasiva() {
+        SecurityUtils.validarAdmin();
+        return ResponseEntity.ok(estadoCarga);
     }
 
     @PostMapping("/isbn")

@@ -103,7 +103,7 @@ Se abre en `http://localhost:5173`. Para apuntar a otro backend, define `VITE_AP
 ./mvnw test
 ```
 
-258 pruebas unitarias de los servicios con JUnit 5 y Mockito. No necesitan base de datos.
+262 pruebas unitarias de los servicios con JUnit 5 y Mockito. No necesitan base de datos.
 
 ## Despliegue
 

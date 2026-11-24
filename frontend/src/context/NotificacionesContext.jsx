@@ -33,8 +33,11 @@ export function NotificacionesProvider({ children }) {
             return
         }
         refrescar()
-        const intervalo = setInterval(refrescar, INTERVALO_MS)
-        return () => clearInterval(intervalo)
+        // Con la pestaña en segundo plano no se pregunta (así Neon puede suspender la base de datos); al volver, se refresca
+        const intervalo = setInterval(() => { if (!document.hidden) refrescar() }, INTERVALO_MS)
+        const alVolver = () => { if (!document.hidden) refrescar() }
+        document.addEventListener('visibilitychange', alVolver)
+        return () => { clearInterval(intervalo); document.removeEventListener('visibilitychange', alVolver) }
     }, [usuario, refrescar])
 
     return (

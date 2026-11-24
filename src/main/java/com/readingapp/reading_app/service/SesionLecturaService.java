@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -19,6 +21,15 @@ public class SesionLecturaService {
     private final SesionLecturaRepository sesionLecturaRepository;
     private final UsuarioRepository usuarioRepository;
     private final RetoService retoService;
+    private final Clock clock;
+
+    /** Marca el inicio del temporizador. Si había otro sin terminar, se descarta. */
+    @Transactional
+    public void iniciar(Long idusuario) {
+        Usuario usuario = usuarioRepository.findById(idusuario)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        usuario.setInicioSesionLectura(LocalDateTime.now(clock));
+    }
 
     @Transactional
     public SesionLecturaDTO.Response registrar(Long idusuario, SesionLecturaDTO.CreateRequest request) {
@@ -29,13 +40,20 @@ public class SesionLecturaService {
             throw new IllegalArgumentException("Una sesión de lectura debe durar entre 1 minuto y 12 horas");
         }
 
-        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime ahora = LocalDateTime.now(clock);
+        if (usuario.getInicioSesionLectura() == null) {
+            throw new IllegalArgumentException("No hay ninguna sesión de lectura en marcha");
+        }
+        // Con pausas el cliente cuenta menos que el tiempo real, pero nunca más (+1 por el redondeo de minutos)
+        long transcurridos = Duration.between(usuario.getInicioSesionLectura(), ahora).toMinutes() + 1;
+        minutos = (int) Math.min(minutos, transcurridos);
+        usuario.setInicioSesionLectura(null);
 
         SesionLectura sesion = SesionLectura.builder()
                 .usuario(usuario)
-                .inicio(ahora.minusMinutes(request.getDuracionMinutos()))
+                .inicio(ahora.minusMinutes(minutos))
                 .fin(ahora)
-                .duracionMinutos(request.getDuracionMinutos())
+                .duracionMinutos(minutos)
                 .build();
 
         sesion = sesionLecturaRepository.save(sesion);

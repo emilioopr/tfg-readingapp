@@ -19,6 +19,12 @@ public class SesionLecturaController {
 
     private final SesionLecturaService sesionLecturaService;
 
+    @PostMapping("/iniciar")
+    public ResponseEntity<Void> iniciar() {
+        sesionLecturaService.iniciar(SecurityUtils.getUsuarioAutenticadoId());
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping
     public ResponseEntity<SesionLecturaDTO.Response> registrar(
             @Valid @RequestBody SesionLecturaDTO.CreateRequest request) {

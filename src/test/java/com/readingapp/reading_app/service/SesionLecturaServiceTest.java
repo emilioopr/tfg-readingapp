@@ -12,10 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,11 +36,17 @@ class SesionLecturaServiceTest {
     @Mock private LibroRepository libroRepository;
     @Mock private RetoService retoService;
 
+    private static final LocalDateTime AHORA = LocalDateTime.of(2026, 11, 24, 20, 0);
+    @Spy private Clock clock = Clock.fixed(AHORA.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
+
     @InjectMocks private SesionLecturaService sesionLecturaService;
+
+    private Usuario usuario;
 
     @BeforeEach
     void setUp() {
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(Usuario.builder().idusuario(1L).nombre("ana").build()));
+        usuario = Usuario.builder().idusuario(1L).nombre("ana").inicioSesionLectura(AHORA.minusHours(13)).build();
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         lenient().when(sesionLecturaRepository.save(any(SesionLectura.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
@@ -57,5 +69,35 @@ class SesionLecturaServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
         verify(sesionLecturaRepository, never()).save(any());
         verify(retoService, never()).recalcularRetosActivosDeUsuario(any());
+    }
+
+    @Test
+    @DisplayName("No se pueden registrar más minutos de los que han pasado desde que arrancó el temporizador")
+    void minutosLimitadosAlTiempoReal() {
+        usuario.setInicioSesionLectura(AHORA.minusMinutes(10));
+
+        SesionLecturaDTO.Response res = sesionLecturaService.registrar(1L, sesion(600));
+
+        assertThat(res.getDuracionMinutos()).isEqualTo(11);
+        assertThat(usuario.getInicioSesionLectura()).isNull();
+    }
+
+    @Test
+    @DisplayName("Sin un temporizador en marcha no se registra la sesión")
+    void sinInicio() {
+        usuario.setInicioSesionLectura(null);
+
+        assertThatThrownBy(() -> sesionLecturaService.registrar(1L, sesion(30)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("en marcha");
+        verify(sesionLecturaRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Iniciar marca la hora del servidor")
+    void iniciarMarcaHora() {
+        sesionLecturaService.iniciar(1L);
+
+        assertThat(usuario.getInicioSesionLectura()).isEqualTo(AHORA);
     }
 }

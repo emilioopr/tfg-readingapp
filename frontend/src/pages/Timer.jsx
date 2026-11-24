@@ -66,7 +66,14 @@ export default function Timer() {
             : Math.floor(segundos / 60)
     }
 
-    const iniciar = () => {
+    const iniciar = async () => {
+        // El servidor apunta la hora de inicio: así no se pueden guardar más minutos de los que han pasado
+        try {
+            await api.post('/sesiones-lectura/iniciar')
+        } catch (err) {
+            avisar(err.response?.data?.mensaje || 'No se ha podido iniciar la sesión')
+            return
+        }
         setActivo(true)
         setPausado(false)
         setPausadoPorTab(false)

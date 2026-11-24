@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +57,10 @@ public class Usuario {
 
     @Column(name = "fecha_ultimo_protector")
     private LocalDate fechaUltimoProtector;
+
+    // Cuándo arrancó el temporizador (lo marca el servidor): una sesión no puede durar más que el tiempo real transcurrido
+    @Column(name = "inicio_sesion_lectura")
+    private LocalDateTime inicioSesionLectura;
 
     @ElementCollection
     @CollectionTable(name = "usuario_dia_protegido", joinColumns = @JoinColumn(name = "idusuario"))

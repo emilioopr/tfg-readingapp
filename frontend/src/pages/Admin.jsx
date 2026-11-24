@@ -43,8 +43,15 @@ export default function Admin() {
         if (generosSeleccionados.length === 0) { setError('Selecciona al menos un género'); return }
         setCargando(true)
         try {
-            const res = await api.post(`/carga/masiva?cantidad=${cantidad}&idioma=${idioma}`, generosSeleccionados)
-            setResultado(`Carga completada: ${res.data?.mensaje || 'libros importados'}`)
+            // La carga sigue en el servidor aunque tarde minutos: se pregunta por su estado cada 3 s
+            await api.post(`/carga/masiva?cantidad=${cantidad}&idioma=${idioma}`, generosSeleccionados)
+            let estado
+            do {
+                await new Promise(r => setTimeout(r, 3000))
+                estado = (await api.get('/carga/masiva/estado')).data
+            } while (estado.enCurso)
+            if (estado.error) setError(estado.error)
+            else setResultado(estado.importados === 1 ? 'Carga completada: 1 libro importado.' : `Carga completada: ${estado.importados} libros importados.`)
         } catch (err) { setError(err.response?.data?.mensaje || 'Error en la carga') }
         finally { setCargando(false) }
     }

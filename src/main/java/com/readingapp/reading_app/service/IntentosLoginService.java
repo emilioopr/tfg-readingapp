@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Protección contra fuerza bruta en el login: tras MAX_FALLOS intentos fallidos seguidos con un mismo email,
  * ese email queda bloqueado durante DURACION_BLOQUEO. Un login correcto pone el contador a cero.
+ * Además, una misma IP se bloquea tras MAX_FALLOS_IP fallos con cualquier email (frena probar muchas cuentas).
  * Se guarda en memoria: con un solo servidor es suficiente (al reiniciar se olvidan los bloqueos).
  */
 @Service
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IntentosLoginService {
 
     public static final int MAX_FALLOS = 5;
+    public static final int MAX_FALLOS_IP = 20;
     public static final Duration DURACION_BLOQUEO = Duration.ofMinutes(15);
 
     private final Clock clock;
@@ -43,9 +45,22 @@ public class IntentosLoginService {
     }
 
     public void registrarFallo(String email) {
-        intentos.compute(email, (e, estado) -> {
+        registrarFallo(email, MAX_FALLOS);
+    }
+
+    /** Las IP se guardan con prefijo para no mezclarse con los emails. */
+    public void comprobarIp(String ip) {
+        comprobar("ip:" + ip);
+    }
+
+    public void registrarFalloIp(String ip) {
+        registrarFallo("ip:" + ip, MAX_FALLOS_IP);
+    }
+
+    private void registrarFallo(String clave, int maxFallos) {
+        intentos.compute(clave, (e, estado) -> {
             int fallos = (estado == null ? 0 : estado.fallos()) + 1;
-            Instant bloqueo = fallos >= MAX_FALLOS ? Instant.now(clock).plus(DURACION_BLOQUEO) : null;
+            Instant bloqueo = fallos >= maxFallos ? Instant.now(clock).plus(DURACION_BLOQUEO) : null;
             return new Estado(fallos, bloqueo);
         });
     }

@@ -87,4 +87,17 @@ class IntentosLoginServiceTest {
 
         assertThatCode(() -> intentos.comprobar("luis@test.com")).doesNotThrowAnyException();
     }
+
+    @Test
+    @DisplayName("Una IP con muchos fallos queda bloqueada aunque pruebe emails distintos")
+    void bloqueoPorIp() {
+        for (int i = 0; i < IntentosLoginService.MAX_FALLOS_IP - 1; i++) intentos.registrarFalloIp("1.2.3.4");
+        assertThatCode(() -> intentos.comprobarIp("1.2.3.4")).doesNotThrowAnyException();
+
+        intentos.registrarFalloIp("1.2.3.4");
+
+        assertThatThrownBy(() -> intentos.comprobarIp("1.2.3.4")).isInstanceOf(DemasiadosIntentosException.class);
+        assertThatCode(() -> intentos.comprobarIp("5.6.7.8")).doesNotThrowAnyException();
+        assertThatCode(() -> intentos.comprobar(EMAIL)).doesNotThrowAnyException();
+    }
 }

@@ -3,6 +3,7 @@ package com.readingapp.reading_app.controller;
 import com.readingapp.reading_app.dto.AuthDTO;
 import com.readingapp.reading_app.dto.UsuarioDTO;
 import com.readingapp.reading_app.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthDTO.AuthResponse> login(@Valid @RequestBody AuthDTO.LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<AuthDTO.AuthResponse> login(@Valid @RequestBody AuthDTO.LoginRequest request,
+                                                      HttpServletRequest http) {
+        return ResponseEntity.ok(authService.login(request, http.getRemoteAddr()));
     }
 
     @PostMapping("/registro")

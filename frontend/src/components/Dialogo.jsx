@@ -1,9 +1,5 @@
 import { useEffect } from 'react'
 
-/**
- * Ventana de confirmación, plana: superficie con filete fino sobre el fondo oscurecido.
- * Se cierra con Escape o pulsando fuera.
- */
 export default function Dialogo({ titulo, children, acciones, onCerrar }) {
     useEffect(() => {
         const alPulsar = (e) => { if (e.key === 'Escape') onCerrar?.() }

@@ -1,17 +1,13 @@
 import { useState } from 'react'
 import { Warning } from '@phosphor-icons/react'
 
-/**
- * Tapa un contenido con spoilers: se ve difuminado con un aviso encima y un botón para mostrarlo.
- * Si `activo` es false (no hay spoiler, o es contenido propio) muestra el contenido tal cual.
- */
 export default function SpoilerOculto({ activo, children }) {
     const [revelado, setRevelado] = useState(false)
 
     if (!activo || revelado) return children
 
     const revelar = (e) => {
-        e.stopPropagation() // las tarjetas de reseña navegan al pulsarlas
+        e.stopPropagation()
         setRevelado(true)
     }
 

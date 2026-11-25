@@ -8,7 +8,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const SIZE = 24
 
-/** Inicial en un círculo con filete, para quien no tiene foto. */
 function Avatar({ src, nombre }) {
     return src
         ? <img src={src} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0 border border-linea" />
@@ -19,7 +18,6 @@ const vacio = (texto) => <p className="font-serif text-xl text-texto-sec py-6">{
 
 const claveLibro = (l) => (l.externo ? `g-${l.idExterno}` : `l-${l.idlibro}`)
 
-// Igual que RelevanciaBusqueda.mismaObra: mismo título principal y alguna palabra del autor de 4+ letras en común
 const normalizar = (t) => (t || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
     .replace(/[^a-z0-9ñ ]/g, ' ').replace(/\s+/g, ' ').trim()
 const tituloPrincipal = (t) => normalizar((t || '').split(/[:.(/]/)[0])
@@ -54,16 +52,13 @@ export default function Busqueda() {
     const librosMostrados = useRef([])
     const librosPendientes = useRef([])
 
-    // Guarda los libros recibidos que aún no están ni mostrados ni pendientes
     const acumularLibros = useCallback((libros) => {
         const vistos = [...librosMostrados.current, ...librosPendientes.current]
         const claves = new Set(vistos.map(claveLibro))
-        // El backend solo quita ediciones repetidas dentro de cada tanda; aquí, las de tandas anteriores
         const nuevos = libros.filter(l => !claves.has(claveLibro(l)) && !(l.externo && vistos.some(p => mismaObra(p, l))))
         librosPendientes.current = [...librosPendientes.current, ...nuevos]
     }, [])
 
-    // Pasa a pantalla hasta `cuantos` libros pendientes y devuelve cuántos ha mostrado
     const mostrarLibros = useCallback((cuantos) => {
         const lote = librosPendientes.current.slice(0, cuantos)
         librosPendientes.current = librosPendientes.current.slice(lote.length)
@@ -72,8 +67,6 @@ export default function Busqueda() {
         return lote.length
     }, [])
 
-    // Cada carga muestra SIZE libros: primero los de la base de datos y, cuando se acaban, los de Google Books.
-    // Lo que sobra de una página o tanda se guarda para el siguiente "Ver más"
     const cargarMasLibros = useCallback(async () => {
         const id = busquedaId.current
         try {
@@ -84,18 +77,14 @@ export default function Busqueda() {
                 if (id !== busquedaId.current) return
                 const locales = (res.data.content || res.data || []).map(l => ({ ...l, externo: false }))
                 paginaLocal.current += 1
-                // La página local no llegó a 24: no hay más locales y se completa con Google
                 if (locales.length < SIZE) localAgotado.current = true
                 acumularLibros(locales)
                 faltan -= mostrarLibros(faltan)
                 setLoading(false)
             }
 
-            // Google Books solo para usuarios con sesión (el backend lo exige)
             if (!usuario) googleAgotado.current = true
 
-            // Se piden tandas hasta completar la página; con tope para no gastar cuota cuando casi todo son
-            // ediciones de obras ya mostradas (p. ej. "el principito")
             for (let tanda = 0; faltan > 0 && !googleAgotado.current && tanda < MAX_TANDAS_GOOGLE; tanda++) {
                 setBuscandoExternos(true)
                 const res = await api.get('/libros/buscar/google', { params: { q: query, ...googleIndex.current } })
@@ -123,7 +112,6 @@ export default function Busqueda() {
         await cargarMasLibros()
     }
 
-    // Los locales navegan directamente; los externos se importan al abrirlos
     const abrirLibro = async (libro) => {
         if (!libro.externo) {
             navigate(`/libro/${libro.idlibro}`)
@@ -216,7 +204,6 @@ export default function Busqueda() {
 
             {loading && <p className="text-texto-sec py-6">Buscando…</p>}
 
-            {/* Libros */}
             {!loading && tab === 'libros' && (
                 <>
                     {resultados.length === 0 && !buscandoExternos ? vacio(`Ningún libro coincide con «${query}».`) : (
@@ -259,7 +246,6 @@ export default function Busqueda() {
                 </>
             )}
 
-            {/* Autores */}
             {!loading && tab === 'autores' && (
                 resultados.length === 0 ? vacio(`Ningún autor coincide con «${query}».`) : (
                     <div className="divide-y divide-linea">
@@ -276,7 +262,6 @@ export default function Busqueda() {
                 )
             )}
 
-            {/* Usuarios */}
             {!loading && tab === 'usuarios' && (
                 resultados.length === 0 ? vacio(`Nadie se llama «${query}» por aquí.`) : (
                     <div className="divide-y divide-linea">

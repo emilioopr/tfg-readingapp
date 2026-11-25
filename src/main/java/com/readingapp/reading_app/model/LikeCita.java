@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-/** Like de un usuario a una cita. Guarda la fecha para poder ordenar el muro por las más likeadas de la semana. */
 @Entity
 @Table(name = "like_cita",
         uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idanotacion"}),

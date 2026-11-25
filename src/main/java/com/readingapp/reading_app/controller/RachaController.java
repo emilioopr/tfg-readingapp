@@ -14,13 +14,11 @@ public class RachaController {
 
     private final RachaService rachaService;
 
-    /*Consultar la racha de cualquier usuario (p. ej. en su perfil): no modifica nada.*/
     @GetMapping("/usuario/{idusuario}")
     public ResponseEntity<RachaDTO.Response> obtener(@PathVariable Long idusuario) {
         return ResponseEntity.ok(rachaService.consultar(idusuario));
     }
 
-    /*Recalcular y guardar la racha propia (gasta/concede protectores, actualiza el récord).*/
     @PostMapping("/actualizar")
     public ResponseEntity<RachaDTO.Response> actualizar() {
         return ResponseEntity.ok(rachaService.actualizar(SecurityUtils.getUsuarioAutenticadoId()));

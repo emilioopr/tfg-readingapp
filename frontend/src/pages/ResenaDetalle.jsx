@@ -59,15 +59,12 @@ export default function ResenaDetalle() {
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }
 
-
     if (loading) return <p className="text-texto-sec">Cargando…</p>
     if (!resena) return <p className="font-serif text-2xl text-texto-sec">Esta reseña ya no está aquí.</p>
     if (eliminada) return <p className="text-texto-sec">Reseña eliminada</p>
 
-
     return (
         <div>
-            {/* Cabecera sobre la portada difuminada: libro, autor de la reseña y nota */}
             <section className="relative isolate -mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-10">
                 <div className="relative max-w-3xl mx-auto flex gap-6 sm:gap-8">
                     <Link to={`/libro/${resena.idlibro}`} className="group flex-shrink-0">
@@ -101,7 +98,6 @@ export default function ResenaDetalle() {
             </section>
 
             <article className="max-w-3xl mx-auto">
-                {/* El texto, en serif de lectura */}
                 <div className="border-t border-linea pt-8">
                     {resena.texto ? (
                         <SpoilerOculto activo={resena.tieneSpoiler && usuario?.id !== resena.idusuario}>
@@ -112,7 +108,6 @@ export default function ResenaDetalle() {
                     )}
                 </div>
 
-                {/* Ritmo y ambiente */}
                 {(resena.ritmo || resena.etiquetas?.length > 0) && (
                     <div className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-8">
                         {resena.ritmo ? (
@@ -138,7 +133,6 @@ export default function ResenaDetalle() {
                     </div>
                 )}
 
-                {/* Me gusta y acciones */}
                 <div className="flex items-center justify-between mt-10 pt-5 border-t border-linea text-sm">
                     <div className="flex items-center gap-4">
                         {usuario && resena.idusuario !== usuario.id ? (
@@ -172,7 +166,6 @@ export default function ResenaDetalle() {
                                     return
                                 }
                                 setEliminada(true)
-                                // De vuelta a la ficha del libro (tu nota se queda como puntuación sin reseña)
                                 navigate(`/libro/${resena.idlibro}`, { replace: true })
                             }}
                                     className="text-texto-ter hover:text-error">

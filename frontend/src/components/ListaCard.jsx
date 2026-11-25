@@ -22,7 +22,6 @@ export default function ListaCard({ lista }) {
 
     return (
         <Link to={`/lista/${lista.idlista}`} className="group flex flex-col sm:flex-row sm:items-center gap-5 py-6 border-b border-linea">
-            {/* Las primeras portadas, solapadas como una pila de libros */}
             <div className="flex flex-shrink-0 pl-1">
                 {libros.length > 0 ? (
                     libros.map((libro, i) => (

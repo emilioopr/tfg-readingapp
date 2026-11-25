@@ -19,7 +19,6 @@ public class ActividadLecturaRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    /** Días con actividad: avance de páginas, libro terminado o sesión de 5+ minutos. */
     public Set<LocalDate> diasConActividad(Long idusuario, LocalDate desde) {
         Set<LocalDate> dias = new HashSet<>();
 

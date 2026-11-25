@@ -6,10 +6,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Puntuación de un libro sin reseña, dada desde su ficha. Cuenta para la nota media como una reseña más.
- * Si el usuario escribe después una reseña del libro, la nota pasa a la reseña y esta valoración se borra.
- */
 @Entity
 @Table(name = "valoracion",
         uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlibro"}),

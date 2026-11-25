@@ -11,12 +11,10 @@ import java.util.List;
 
 public interface RetoRepository extends JpaRepository<Reto, Long> {
 
-    // Solo retos vigentes: los que ya han terminado dejan de mostrarse
     Page<Reto> findByModalidadAndFechaFinGreaterThanEqual(ModalidadReto modalidad, LocalDate hoy, Pageable pageable);
 
     Page<Reto> findByCreadorIdusuarioAndFechaFinGreaterThanEqual(Long idusuario, LocalDate hoy, Pageable pageable);
 
-    // Retos a los que te puedes unir: predefinidos + compartidos + colaborativos
     Page<Reto> findByModalidadInAndFechaFinGreaterThanEqual(List<ModalidadReto> modalidades, LocalDate hoy, Pageable pageable);
 }
 

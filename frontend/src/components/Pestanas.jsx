@@ -1,9 +1,3 @@
-/**
- * Pestañas de la app: texto sencillo; la activa, en texto principal con una línea fina de acento debajo.
- *
- * pestanas: [{ key, label }]  (label puede llevar contadores u otros nodos)
- * desplazable: si no caben (p. ej. el perfil en móvil), se desplazan con el dedo
- */
 export default function Pestanas({ pestanas, activa, onCambiar, className = '', desplazable = false, centradas = false }) {
     return (
         <div role="tablist"

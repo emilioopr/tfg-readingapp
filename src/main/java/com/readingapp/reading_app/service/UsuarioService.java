@@ -62,7 +62,6 @@ public class UsuarioService {
         return toResponse(usuario);
     }
 
-    /*Estadísticas del perfil. Las reseñas privadas solo cuentan para el propio usuario.*/
     public UsuarioDTO.PerfilResponse obtenerPerfil(Long id) {
         Usuario usuario = buscarPorId(id);
         long resenas = SecurityUtils.esUsuarioActual(id)
@@ -152,7 +151,6 @@ public class UsuarioService {
                 .toList();
     }
 
-    /*Borra la cuenta y todo lo que depende de ella (uso de administrador).*/
     @Transactional
     public void eliminar(Long id) {
         if (!usuarioRepository.existsById(id)) {
@@ -161,7 +159,6 @@ public class UsuarioService {
         borradoCuentaRepository.borrarCuenta(id);
     }
 
-    /*Cambio de contraseña: hay que dar la actual.*/
     @Transactional
     public void cambiarPassword(Long id, String actual, String nueva) {
         Usuario usuario = buscarPorId(id);
@@ -175,12 +172,10 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    /*Emails en minúsculas y sin espacios, para que "Ana@Gmail.com" y "ana@gmail.com" sean la misma cuenta.*/
     public static String normalizarEmail(String email) {
         return email == null ? null : email.trim().toLowerCase();
     }
 
-    /*El propio usuario se da de baja: debe confirmar su contraseña.*/
     @Transactional
     public void eliminarCuentaPropia(Long id, String password) {
         Usuario usuario = buscarPorId(id);

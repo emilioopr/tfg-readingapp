@@ -13,7 +13,6 @@ const ORDENES = [
     { key: 'recientes', label: 'Recientes' },
 ]
 
-/** Muro de citas: frases de los libros compartidas por la comunidad, que se pueden likear y colgar en el perfil. */
 export default function Citas() {
     const { avisar, avisarCarga } = useAvisos()
     const { usuario } = useAuth()

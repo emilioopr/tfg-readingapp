@@ -41,7 +41,7 @@ public class Reto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_creador")
-    private Usuario creador; // null en PREDEFINIDO y COLABORATIVO
+    private Usuario creador;
 
     @OneToMany(mappedBy = "reto", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

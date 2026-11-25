@@ -58,8 +58,6 @@ class SeguimientoServiceTest {
                 .thenAnswer(invocacion -> invocacion.getArgument(0));
     }
 
-    // ===== Helpers =====
-
     private SeguimientoDTO.CreateRequest peticion(EstadoLectura estado, Integer pagina) {
         SeguimientoDTO.CreateRequest request = new SeguimientoDTO.CreateRequest();
         request.setIdlibro(ID_LIBRO);
@@ -84,8 +82,6 @@ class SeguimientoServiceTest {
     private void librosLeyendo(long cantidad) {
         when(seguimientoRepository.countLibrosLeyendoActualmente(ID_USUARIO)).thenReturn(cantidad);
     }
-
-    // ===== PENDIENTE (Quiero leer) =====
 
     @Nested
     @DisplayName("Estado PENDIENTE")
@@ -133,8 +129,6 @@ class SeguimientoServiceTest {
             assertThat(res.getEstado()).isEqualTo(EstadoLectura.PENDIENTE);
         }
     }
-
-    // ===== LEYENDO =====
 
     @Nested
     @DisplayName("Estado LEYENDO")
@@ -240,8 +234,6 @@ class SeguimientoServiceTest {
         }
     }
 
-    // ===== LEIDO / ABANDONADO =====
-
     @Nested
     @DisplayName("Estados LEIDO y ABANDONADO")
     class LeidoYAbandonado {
@@ -297,8 +289,6 @@ class SeguimientoServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
-
-    // ===== Errores y cálculo de progreso =====
 
     @Nested
     @DisplayName("Validaciones generales")

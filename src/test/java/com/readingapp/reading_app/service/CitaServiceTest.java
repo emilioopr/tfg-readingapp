@@ -57,7 +57,6 @@ class CitaServiceTest {
         libro = Libro.builder().idlibro(10L).titulo("Las ratas")
                 .autor(Autor.builder().idautor(5L).nombre("Miguel Delibes").build()).build();
         lenient().when(usuarioRepository.findById(1L)).thenReturn(Optional.of(ana));
-        // Ana es quien usa la aplicación en estos tests
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 "ana@test.com", 1L, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
     }
@@ -77,8 +76,6 @@ class CitaServiceTest {
     private List<String> textos(CitaDTO.Pagina pagina) {
         return pagina.getCitas().stream().map(CitaDTO.Response::getTexto).toList();
     }
-
-    // === MURO DE LA COMUNIDAD ===
 
     @Test
     @DisplayName("\"Recientes\" pide las citas públicas y las devuelve en ese orden")
@@ -136,8 +133,6 @@ class CitaServiceTest {
         assertThat(citaService.obtenerComunidad("recientes", 0, 1).getHayMas()).isTrue();
     }
 
-    // === GUARDAR EN EL MURAL ===
-
     @Test
     @DisplayName("Guardar una cita la añade a tus citas guardadas; quitarla la saca")
     void guardarYQuitar() {
@@ -171,8 +166,6 @@ class CitaServiceTest {
 
         assertThat(ana.getCitasGuardadas()).containsExactly(propia);
     }
-
-    // === LIKES ===
 
     @Test
     @DisplayName("Dar like a una cita lo guarda y avisa a su autor")

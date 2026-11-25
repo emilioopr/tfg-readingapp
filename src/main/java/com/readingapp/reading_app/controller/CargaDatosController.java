@@ -30,10 +30,8 @@ public class CargaDatosController {
         return ResponseEntity.ok(Map.of("query", query, "importados", importados));
     }
 
-    // Estado de la última carga masiva. shortcut: en memoria y una sola a la vez; vale con un único servidor
     private volatile Map<String, Object> estadoCarga = Map.of("enCurso", false);
 
-    /** Lanza la carga en segundo plano (puede tardar minutos) y responde al momento; el progreso se consulta en /masiva/estado. */
     @PostMapping("/masiva")
     public synchronized ResponseEntity<Map<String, Object>> importarMasiva(
             @RequestBody List<String> categorias,

@@ -78,9 +78,6 @@ class PermisosServiceTest {
         SecurityContextHolder.clearContext();
     }
 
-    // ===== Helpers =====
-
-    /*Simula lo que hace JwtFilter: credentials = id del usuario, authority = ROLE_<rol>.*/
     private void autenticarComo(Long idusuario, String rol) {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 "usuario" + idusuario + "@test.com", idusuario,
@@ -91,8 +88,6 @@ class PermisosServiceTest {
         return Lista.builder().idlista(id).nombre("Lista " + id).esPublica(publica)
                 .usuario(propietario).libros(new HashSet<>()).build();
     }
-
-    // ===== Borrados solo por el propietario (o admin) =====
 
     @Nested
     @DisplayName("Notificaciones")
@@ -170,7 +165,6 @@ class PermisosServiceTest {
 
         @BeforeEach
         void setUp() {
-            // propietario envía, otro recibe
             recomendacion = Recomendacion.builder().idrecomendacion(40L)
                     .emisor(propietario).receptor(otro).libro(libro).build();
             when(recomendacionRepository.findById(40L)).thenReturn(Optional.of(recomendacion));
@@ -288,8 +282,6 @@ class PermisosServiceTest {
             verify(autorRepository).deleteById(5L);
         }
     }
-
-    // ===== Contenido privado =====
 
     @Nested
     @DisplayName("Listas privadas")

@@ -55,7 +55,6 @@ class ValoracionServiceTest {
         lenient().when(usuarioRepository.findById(1L)).thenReturn(Optional.of(ana));
         lenient().when(libroRepository.findById(10L)).thenReturn(Optional.of(libro));
         lenient().when(valoracionRepository.save(any(Valoracion.class))).thenAnswer(inv -> inv.getArgument(0));
-        // Ana es quien usa la aplicación en estos tests
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 "ana@test.com", 1L, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
     }
@@ -65,7 +64,6 @@ class ValoracionServiceTest {
         SecurityContextHolder.clearContext();
     }
 
-    /** El último seguimiento de Ana para el libro (null = nunca lo ha tenido en la estantería). */
     private void ultimoSeguimiento(EstadoLectura estado, boolean lecturaAntigua) {
         Seguimiento s = estado == null ? null : Seguimiento.builder().usuario(ana).libro(libro).estado(estado)
                 .numPagina(estado == EstadoLectura.LEIDO ? 250 : 20).lecturaAntigua(lecturaAntigua).build();

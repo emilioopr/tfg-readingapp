@@ -1,13 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { CaretLeft, CaretRight } from '@phosphor-icons/react'
 
-/**
- * Fila horizontal de cinco en cinco, alineada con una rejilla de 5 columnas.
- * Se avanza con las flechas de la cabecera (sin barra de desplazamiento visible).
- *
- * titulo: nodo de la cabecera (a la izquierda de las flechas)
- * children: los elementos; cada uno ocupa una columna
- */
 export default function Carrusel({ titulo, children }) {
     const pista = useRef(null)
     const [puede, setPuede] = useState({ izq: false, der: false })

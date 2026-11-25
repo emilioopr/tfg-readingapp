@@ -114,14 +114,11 @@ public class LibroService {
         libroRepository.deleteById(id);
     }
 
-    // === FAVORITOS ===
-
     @Transactional
     public void agregarFavorito(Long usuarioId, Long libroId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         Libro libro = buscarPorId(libroId);
-        // El perfil solo muestra 5 huecos: el límite se comprueba aquí y no solo en el frontend
         if (!usuario.getLibrosFavoritos().contains(libro) && usuario.getLibrosFavoritos().size() >= MAX_FAVORITOS) {
             throw new IllegalArgumentException("Ya tienes " + MAX_FAVORITOS + " libros favoritos. Quita uno para añadir otro.");
         }
@@ -162,7 +159,6 @@ public class LibroService {
         for (double d = 0.5; d <= 5.0; d += 0.5) {
             dist.put(String.valueOf(d), 0L);
         }
-        // Reseñas y puntuaciones sin reseña se suman en la misma barra
         List<Object[]> rows = new ArrayList<>(resenaRepository.findDistribucionByLibro(idlibro));
         rows.addAll(valoracionRepository.findDistribucionByLibro(idlibro));
         for (Object[] row : rows) {
@@ -180,14 +176,11 @@ public class LibroService {
                 .toList();
     }
 
-    // === HELPERS ===
-
     public Libro buscarPorId(Long id) {
         return libroRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
     }
 
-    /** Ficha completa de un libro (página de detalle): incluye distribución de notas, ritmo y etiquetas. */
     private LibroDTO.Response toDetalle(Libro libro) {
         LibroDTO.Response r = toResumen(libro, notasDe(List.of(libro)));
         r.setRitmoMedio(resenaRepository.findRitmoMedioByLibro(libro.getIdlibro()));
@@ -196,13 +189,11 @@ public class LibroService {
         return r;
     }
 
-    /** Listados: datos básicos y nota media, con una sola consulta de notas para todos los libros. */
     private List<LibroDTO.Response> toResumenes(List<Libro> libros) {
         Map<Long, NotasLibros.Nota> notas = notasDe(libros);
         return libros.stream().map(l -> toResumen(l, notas)).toList();
     }
 
-    /** idlibro -> nota media, nº de valoraciones y nº de reseñas públicas. */
     private Map<Long, NotasLibros.Nota> notasDe(List<Libro> libros) {
         return notasLibros.de(libros.stream().map(Libro::getIdlibro).toList());
     }

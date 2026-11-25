@@ -69,7 +69,6 @@ class LibroServiceTest {
     void detalleConEstadisticas() {
         when(libroRepository.findById(7L)).thenReturn(Optional.of(libro(7)));
         when(resenaRepository.findDistribucionByLibro(7L)).thenReturn(List.<Object[]>of(new Object[]{4.5, 2L}));
-        // Las puntuaciones sin reseña se suman en la misma barra
         when(valoracionRepository.findDistribucionByLibro(7L)).thenReturn(List.<Object[]>of(new Object[]{4.5, 1L}, new Object[]{3.0, 1L}));
         when(resenaRepository.findRitmoMedioByLibro(7L)).thenReturn(2.0);
         when(resenaRepository.findEtiquetasPopularesByLibro(7L)).thenReturn(List.<Object[]>of(new Object[]{"ADICTIVO", 3L}));

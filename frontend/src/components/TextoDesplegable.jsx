@@ -1,9 +1,5 @@
 import { useRef, useState, useLayoutEffect } from 'react'
 
-/**
- * Texto largo recortado a unas líneas, con "Ver más" para desplegarlo en el sitio.
- * El botón solo aparece si el texto realmente no cabe.
- */
 export default function TextoDesplegable({ texto, lineas = 6, className = '' }) {
     const ref = useRef(null)
     const [abierto, setAbierto] = useState(false)

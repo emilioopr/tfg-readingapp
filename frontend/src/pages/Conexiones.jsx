@@ -5,7 +5,6 @@ import api from '../api/axios'
 import Pestanas from '../components/Pestanas'
 import { useAvisos } from '../context/AvisosContext'
 
-/** Seguidores y seguidos del usuario con sesión (se abre desde el desplegable del perfil). */
 export default function Conexiones() {
     const { avisar, avisarCarga } = useAvisos()
     const { usuario } = useAuth()

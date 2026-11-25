@@ -19,7 +19,6 @@ export default function Landing() {
         <div className="min-h-screen bg-fondo">
             <Navbar />
 
-            {/* Portada */}
             <section className="max-w-4xl mx-auto px-6 pt-24 pb-28 sm:pt-32 sm:pb-36 text-center">
                 <p className="etiqueta mb-6">Tu cuaderno de lectura</p>
                 <h1 className="font-serif text-5xl sm:text-7xl leading-[1.02] tracking-tight text-texto">
@@ -35,7 +34,6 @@ export default function Landing() {
                 </div>
             </section>
 
-            {/* Qué hace */}
             <section className="border-t border-linea">
                 <div className="max-w-5xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-0 md:divide-x divide-linea">
                     {QUE_HACE.map(([titulo, texto], i) => (
@@ -48,7 +46,6 @@ export default function Landing() {
                 </div>
             </section>
 
-            {/* Diferencias */}
             <section className="border-t border-linea">
                 <div className="max-w-5xl mx-auto px-6 py-20">
                     <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-texto mb-14">No es solo otra app de libros.</h2>
@@ -63,7 +60,6 @@ export default function Landing() {
                 </div>
             </section>
 
-            {/* Llamada final */}
             <section className="border-t border-linea">
                 <div className="max-w-3xl mx-auto px-6 py-24 text-center">
                     <h2 className="font-serif text-4xl sm:text-5xl tracking-tight text-texto">¿Empezamos?</h2>

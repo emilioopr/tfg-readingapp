@@ -4,15 +4,12 @@ import { useRacha } from '../context/RachaContext.jsx'
 
 const HITOS = [7, 30, 100, 365]
 
-/** "14 días seguidos leyendo"; con uno, "Primer día de racha". */
 const diasSeguidos = (n) => n === 1 ? 'Primer día de racha' : `${n.toLocaleString('es-ES')} días seguidos leyendo`
 
-/** Icono de la racha: una llama de trazo fino (en acento si hay racha, apagada si no). */
 export function IconoRacha({ activa = true, size = 18 }) {
     return <Fire aria-hidden size={size} weight={activa ? 'fill' : 'regular'} className={activa ? 'text-acento' : 'text-texto-ter'} />
 }
 
-/** Sello tipográfico, como un ex libris: el número dentro de un círculo fino. */
 export function Sello({ numero, etiqueta = 'días', className = 'w-20 h-20' }) {
     return (
         <div className={`rounded-full border border-acento/70 flex flex-col items-center justify-center text-acento ${className}`}
@@ -23,7 +20,6 @@ export function Sello({ numero, etiqueta = 'días', className = 'w-20 h-20' }) {
     )
 }
 
-/** La semana: siete marcas finas. Leído relleno en acento, protegido y hoy pendiente con contorno acento. */
 export function SemanaRacha({ semana = [] }) {
     const estilo = {
         LEIDO: 'bg-acento',
@@ -45,7 +41,6 @@ export function SemanaRacha({ semana = [] }) {
     )
 }
 
-/** Racha compacta de la barra de navegación, con la semana al pasar el ratón */
 export function RachaNavbar() {
     const { racha } = useRacha() || {}
     if (!racha) return null
@@ -81,7 +76,6 @@ export function RachaNavbar() {
     )
 }
 
-/** Número que cuenta suavemente desde `desde` hasta `hasta`. */
 function useContador(desde, hasta, duracion = 900) {
     const [valor, setValor] = useState(hasta)
     const marco = useRef(0)
@@ -90,7 +84,7 @@ function useContador(desde, hasta, duracion = 900) {
         const inicio = performance.now()
         const paso = (ahora) => {
             const t = Math.min(1, (ahora - inicio) / duracion)
-            const suave = 1 - Math.pow(1 - t, 3) // ease-out, sin rebote
+            const suave = 1 - Math.pow(1 - t, 3)
             setValor(Math.round(desde + (hasta - desde) * suave))
             if (t < 1) marco.current = requestAnimationFrame(paso)
         }
@@ -101,7 +95,6 @@ function useContador(desde, hasta, duracion = 900) {
     return valor
 }
 
-/** Aviso al sumar un día de racha (se monta una vez en MainLayout): una tira sobria con el número contando. */
 export function RachaCelebracion() {
     const { celebracion, cerrarCelebracion } = useRacha() || {}
     const n = celebracion?.racha ?? 0

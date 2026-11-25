@@ -35,7 +35,6 @@ export default function ListaDetalle() {
 
     const toggleLike = async () => {
         const estaba = lista.likeada
-        // Se marca al momento; si falla, se deshace
         setLista(l => ({ ...l, likeada: !estaba, numLikes: Math.max((l.numLikes || 0) + (estaba ? -1 : 1), 0) }))
         try {
             if (estaba) await api.delete(`/listas/${id}/like`)
@@ -61,7 +60,6 @@ export default function ListaDetalle() {
     return (
         <div>
             <div className="mb-8">
-                {/* En móvil los botones van debajo del título para que no se partan */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="min-w-0">
                         <h1 className="font-serif text-4xl leading-none text-texto">{lista.nombre}</h1>
@@ -131,7 +129,6 @@ export default function ListaDetalle() {
                         <div key={libro.idlibro} className="group relative">
                             <LibroCard libro={libro} className="w-full" />
                             {esMia && (
-                                // Siempre visible en pantallas táctiles; en escritorio aparece al pasar el ratón
                                 <button onClick={() => quitarLibro(libro.idlibro)} title="Quitar de la lista"
                                         aria-label="Quitar de la lista"
                                         className="absolute top-1 right-1 bg-fondo/80 text-texto-sec hover:text-error rounded-full w-6 h-6 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity">

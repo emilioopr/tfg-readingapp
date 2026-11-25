@@ -33,10 +33,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Sin token válido: 401 (por defecto Spring Security respondería 403)
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas (sin token)
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/libros/buscar/google").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/libros/**").permitAll()
@@ -49,7 +47,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/carga/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -71,7 +68,6 @@ public class SecurityConfig {
         }};
     }
 
-    /*Encoder para UsuarioService*/
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

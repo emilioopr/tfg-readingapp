@@ -16,7 +16,6 @@ export default function Registro() {
         setError('')
         try {
             const res = await api.post('/auth/registro', { nombre, email, password })
-            // Misma forma de iniciar sesión que en Login: el contexto guarda el token y el usuario
             login(res.data)
             navigate('/')
         } catch (err) {

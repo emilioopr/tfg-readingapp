@@ -10,7 +10,6 @@ export default function MainLayout() {
         <div className="min-h-screen bg-fondo text-texto">
             <Navbar />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-                {/* Mientras llega el código de la pantalla, la barra sigue en su sitio */}
                 <Suspense fallback={<Cargando />}>
                     <Outlet />
                 </Suspense>

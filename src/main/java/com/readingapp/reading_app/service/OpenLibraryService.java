@@ -24,7 +24,6 @@ public class OpenLibraryService {
     private static final String AUTHOR_DETAIL_URL = "https://openlibrary.org/authors/{key}.json";
     private static final String AUTHOR_PHOTO_URL = "https://covers.openlibrary.org/a/olid/{key}-M.jpg";
 
-    /** Enriquece un autor concreto; devuelve si ha conseguido una foto nueva. */
     @Transactional
     public boolean enriquecerAutor(Long idautor) {
         Autor autor = autorRepository.findById(idautor)
@@ -47,17 +46,13 @@ public class OpenLibraryService {
             String key = (String) autorOL.get("key");
             if (key == null) return;
 
-            // Foto
             String fotoUrl = AUTHOR_PHOTO_URL.replace("{key}", key);
             try {
-                // Sin default=false, Open Library responde 200 con una imagen vacía aunque el autor no tenga foto
                 restTemplate.headForHeaders(fotoUrl + "?default=false");
                 autor.setFoto(fotoUrl);
             } catch (Exception e) {
-                // No tiene foto
             }
 
-            // Biografía
             try {
                 Map<String, Object> detalle = restTemplate.getForObject(AUTHOR_DETAIL_URL, Map.class, key);
                 if (detalle != null) {

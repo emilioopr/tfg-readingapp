@@ -6,7 +6,6 @@ import api from '../api/axios'
 import Portada from '../components/Portada'
 import { formatoMedia } from '../utils/notas'
 
-/** Libro destacado del día: portada, datos y sinopsis, sobre el fondo liso. */
 function Destacado({ libro }) {
     return (
         <section className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-start mb-12">
@@ -98,7 +97,6 @@ export default function Catalogo() {
         <div>
             {catalogo.destacado && <Destacado libro={catalogo.destacado} />}
 
-            {/* Categorías */}
             {catalogo.categorias?.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mb-10">
                     {catalogo.categorias.map((c) => (

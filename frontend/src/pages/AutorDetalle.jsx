@@ -41,7 +41,6 @@ export default function AutorDetalle() {
 
     return (
         <div className="max-w-4xl mx-auto">
-            {/* Header centrado */}
             <div className="text-center mb-12">
                 <div className="flex justify-center mb-4">
                     {autor.foto ? (
@@ -78,7 +77,6 @@ export default function AutorDetalle() {
                 )}
             </div>
 
-            {/* Libros */}
             <div className="border-t border-linea pt-8">
                 <h2 className="etiqueta mb-6">Libros</h2>
                 {libros.length === 0 ? (

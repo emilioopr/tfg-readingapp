@@ -69,7 +69,6 @@ public class LibroController {
         return ResponseEntity.noContent().build();
     }
 
-    /*Catálogo completo: libro destacado, filas temáticas y por categoría (con libros aleatorios en cada visita).*/
     @GetMapping("/catalogo")
     public ResponseEntity<CatalogoDTO.Response> obtenerCatalogo() {
         return ResponseEntity.ok(catalogoService.obtenerCatalogo());
@@ -101,7 +100,6 @@ public class LibroController {
     @GetMapping("/buscar/google")
     public ResponseEntity<Map<String, Object>> buscarEnGoogle(
             @RequestParam String q,
-            // Posición por la que sigue cada búsqueda; -1 si ya se agotó
             @RequestParam(defaultValue = "0") int titulo,
             @RequestParam(defaultValue = "0") int autor,
             @RequestParam(defaultValue = "0") int general) {
@@ -112,8 +110,6 @@ public class LibroController {
     public ResponseEntity<Map<String, Long>> importarDesdeGoogle(@PathVariable String idExterno) {
         return ResponseEntity.ok(Map.of("idlibro", googleBooksService.importarPorIdExterno(idExterno)));
     }
-
-    // === FAVORITOS ===
 
     @PostMapping("/{libroId}/favorito")
     public ResponseEntity<Void> agregarFavorito(@PathVariable Long libroId) {

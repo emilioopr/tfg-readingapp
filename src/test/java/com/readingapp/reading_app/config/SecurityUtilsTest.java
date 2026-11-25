@@ -26,9 +26,6 @@ class SecurityUtilsTest {
         SecurityContextHolder.clearContext();
     }
 
-    // ===== Helpers =====
-
-    /*Simula lo que hace JwtFilter: credentials = id del usuario, authority = ROLE_<rol>.*/
     static void autenticarComo(Long idusuario, String rol) {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 "usuario" + idusuario + "@test.com", idusuario,

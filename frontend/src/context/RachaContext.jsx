@@ -30,7 +30,6 @@ export function RachaProvider({ children }) {
 
     const cerrarCelebracion = useCallback(() => setCelebracion(null), [])
 
-    // Llamar después de cualquier actividad de lectura
     const refrescarRacha = async () => {
         const antes = rachaRef.current
         const despues = await cargar()
@@ -48,6 +47,5 @@ export function RachaProvider({ children }) {
     )
 }
 
-// El hook vive junto a su Provider (patrón habitual de Context)
 // eslint-disable-next-line react-refresh/only-export-components
 export const useRacha = () => useContext(RachaContext)

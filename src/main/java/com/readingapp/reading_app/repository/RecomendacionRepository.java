@@ -11,7 +11,6 @@ import java.util.List;
 public interface RecomendacionRepository extends JpaRepository<Recomendacion, Long> {
     List<Recomendacion> findByReceptorIdusuario(Long idusuario);
     List<Recomendacion> findByEmisorIdusuario(Long idusuario);
-    /** Las creadas antes de que "visto" tuviera valor por defecto lo guardan a NULL: también cuentan como no vistas. */
     @Query("SELECT r FROM Recomendacion r WHERE r.receptor.idusuario = :idusuario AND (r.visto = false OR r.visto IS NULL)")
     List<Recomendacion> findNoVistasByReceptor(@Param("idusuario") Long idusuario);
 }

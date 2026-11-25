@@ -103,7 +103,7 @@ class CatalogoServiceTest {
     @DisplayName("Los libros importados dos veces (mismo título y autor) solo aparecen una vez")
     void sinDuplicados() {
         variosLibros(6, "History");
-        libro("History 0", "History", "otra.jpg"); // duplicado del primero
+        libro("History 0", "History", "otra.jpg");
 
         CatalogoDTO.PaginaCategoria pagina = catalogoService.obtenerPorCategoria("historia", 0, 50);
 

@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    // El email no distingue mayúsculas (las cuentas antiguas pueden tenerlas guardadas)
     Optional<Usuario> findByEmailIgnoreCase(String email);
     boolean existsByEmailIgnoreCase(String email);
     List<Usuario> findByNombreContainingIgnoreCase(String nombre);

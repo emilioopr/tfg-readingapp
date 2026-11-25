@@ -34,7 +34,6 @@ public class ResenaController {
         return ResponseEntity.ok(resenaService.obtenerPorId(id));
     }
 
-    /*Todas tus reseñas, también las privadas.*/
     @GetMapping("/mias")
     public ResponseEntity<Page<ResenaDTO.Response>> obtenerMias(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(resenaService.obtenerPorUsuario(SecurityUtils.getUsuarioAutenticadoId(), pageable));
@@ -78,8 +77,6 @@ public class ResenaController {
             @PathVariable Long idusuario, @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(resenaService.obtenerResenasDeSeguidos(idusuario, pageable));
     }
-
-    // === LIKES ===
 
     @PostMapping("/{resenaId}/like")
     public ResponseEntity<Void> darLike(@PathVariable Long resenaId) {

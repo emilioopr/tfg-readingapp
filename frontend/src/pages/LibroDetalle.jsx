@@ -17,7 +17,6 @@ import { FRASES_RITMO, nivelRitmo } from '../utils/ritmo'
 import { useAvisos } from '../context/AvisosContext'
 import { nombreEtiqueta } from '../utils/etiquetas'
 
-// Filtros de las pestañas de reseñas y anotaciones (texto sencillo; el activo, en texto principal)
 function Filtros({ opciones, activo, onCambiar }) {
     return (
         <div className="flex gap-5 mb-6 text-sm" role="group" aria-label="Filtrar">
@@ -98,7 +97,6 @@ export default function LibroDetalle() {
         } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se han podido cargar las anotaciones.') }
     }, [avisarCarga, id])
 
-    // Reseñas públicas del libro sin filtrar; las "de amigos" se sacan de aquí con la lista de seguidos
     const cargarResenasLibro = useCallback(async () => {
         if (!usuario) return
         try {
@@ -110,7 +108,6 @@ export default function LibroDetalle() {
     const cargarMisResenas = useCallback(async () => {
         if (!usuario) return
         try {
-            // Tus reseñas (también las privadas), no solo las públicas del libro
             const res = await api.get(`/resenas/mias?size=200`)
             const todas = res.data.content || res.data || []
             setMisResenas(todas.filter(r => r.idlibro === parseInt(id)))
@@ -125,8 +122,6 @@ export default function LibroDetalle() {
         } catch (err) { console.error('Error:', err) }
     }, [id, usuario])
 
-    // A quién sigues (para los filtros "De amigos") y si puedes recomendar: solo a mutuals (os seguís
-    // mutuamente); sin ninguno no se muestra el botón
     const cargarSeguidos = useCallback(async () => {
         if (!usuario) return
         try {
@@ -193,8 +188,7 @@ export default function LibroDetalle() {
     const dist = libro.distribucionNotas || {}
     const distKeys = ['0.5', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0']
     const maxDist = Math.max(...distKeys.map(k => dist[k] || 0), 1)
-    const notaMedia = libro.notaMedia // sobre 5
-    // Tu reseña más reciente de este libro (si lo has releído puede haber varias)
+    const notaMedia = libro.notaMedia
     const resenasAmigos = resenasLibro.filter(r => seguidos.has(r.idusuario))
     const anotacionesAmigos = anotacionesPublicas.filter(a => seguidos.has(a.idusuario))
     const miResena = [...misResenas].sort((a, b) => new Date(b.fechaCreacion) - new Date(a.fechaCreacion))[0]
@@ -203,7 +197,6 @@ export default function LibroDetalle() {
         { key: 'todas', label: 'Todas' },
         ...(usuario ? [{ key: 'amigos', label: 'De amigos' }, { key: 'mias', label: 'Mías' }] : []),
     ]
-    // Ficha de catálogo del margen
     const ficha = [
         ['Autor', libro.nombreAutor && <Link to={`/autor/${libro.idautor}`} className="hover:text-acento">{libro.nombreAutor}</Link>],
         ['Páginas', libro.numPaginas],
@@ -214,11 +207,9 @@ export default function LibroDetalle() {
 
     return (
         <div>
-            {/* Cabecera a todo el ancho, sobre la portada difuminada */}
             <section className="relative isolate -mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-14 mb-4">
 
                 <div className="relative max-w-6xl mx-auto grid gap-10 md:grid-cols-[13rem_minmax(0,1fr)] lg:grid-cols-[14rem_minmax(0,1fr)_13rem] lg:gap-12">
-                    {/* Portada y tu nota */}
                     <div className="flex flex-col items-center md:items-start">
                         <Portada src={libro.portada} titulo={libro.titulo} autor={libro.nombreAutor} id={libro.idlibro}
                                  elevar={false} className="w-44 md:w-full" />
@@ -228,7 +219,6 @@ export default function LibroDetalle() {
                         )}
                     </div>
 
-                    {/* Título, nota, acciones y sinopsis */}
                     <div className="min-w-0">
                         <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.5rem] leading-[1.02] tracking-tight text-texto">{libro.titulo}</h1>
                         <Link to={`/autor/${libro.idautor}`} className="inline-block text-lg text-texto-sec hover:text-acento mt-3">
@@ -254,7 +244,6 @@ export default function LibroDetalle() {
                             )}
                         </div>
 
-                        {/* Acciones de lectura según el estado del libro, y las de guardar/compartir */}
                         {usuario && (
                             <div className="flex flex-wrap items-center gap-3 mt-8">
                                 {estadoLibro === 'LEYENDO' ? (
@@ -296,7 +285,6 @@ export default function LibroDetalle() {
                         )}
                     </div>
 
-                    {/* Ficha de catálogo en el margen */}
                     {ficha.length > 0 && (
                         <aside className="md:col-start-2 lg:col-start-3 lg:border-l lg:border-linea lg:pl-8">
                             <h2 className="etiqueta mb-4">Ficha</h2>
@@ -314,10 +302,8 @@ export default function LibroDetalle() {
             </section>
 
             <div className="max-w-6xl mx-auto">
-                {/* Estadísticas de valoraciones */}
                 {libro.numValoraciones > 0 && (
                     <section className="border-t border-linea pt-8 mb-12">
-                        {/* Distribución de notas, centrada: de media estrella a cinco (la media ya está arriba) */}
                         <div className="flex flex-col items-center">
                             <h3 className="etiqueta mb-6">Distribución de notas</h3>
                             <div className="flex items-end gap-1.5 sm:gap-2 h-32">
@@ -328,7 +314,6 @@ export default function LibroDetalle() {
                                         <div key={k} className="relative h-full flex items-end group">
                                             <div className={`w-5 sm:w-7 rounded-[1px] ${count > 0 ? 'bg-texto/70 group-hover:bg-texto' : 'bg-linea'}`}
                                                  style={{ height: `${alto}%` }} />
-                                            {/* Al pasar el ratón: nº de valoraciones con esa nota, encima de la barra */}
                                             <div className="absolute left-1/2 -translate-x-1/2 mb-1.5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                                  style={{ bottom: `${alto}%` }}>
                                                 <div className="bg-superficie border border-linea text-texto text-[11px] rounded px-2 py-1 whitespace-nowrap">
@@ -340,7 +325,6 @@ export default function LibroDetalle() {
                                     )
                                 })}
                             </div>
-                            {/* Eje: solo las estrellas enteras, bajo su barra */}
                             <div className="flex gap-1.5 sm:gap-2 mt-2 text-[11px] text-texto-ter">
                                 {distKeys.map((k) => (
                                     <span key={k} className="w-5 sm:w-7 text-center">{k.endsWith('.0') ? `${parseInt(k)}★` : ''}</span>
@@ -351,7 +335,6 @@ export default function LibroDetalle() {
                             </p>
                         </div>
 
-                        {/* Ritmo medio, debajo */}
                         <div className="flex flex-col items-center border-t border-linea mt-10 pt-8">
                             <h3 className="etiqueta mb-4">Ritmo</h3>
                             {libro.ritmoMedio ? (
@@ -371,7 +354,6 @@ export default function LibroDetalle() {
                             )}
                         </div>
 
-                        {/* Etiquetas populares */}
                         {libro.etiquetasPopulares && libro.etiquetasPopulares.length > 0 && (
                             <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
                                 <span className="etiqueta mr-2">Ambiente</span>
@@ -383,11 +365,9 @@ export default function LibroDetalle() {
                     </section>
                 )}
 
-                {/* Tabs principales */}
                 <Pestanas activa={tabPrincipal} onCambiar={setTabPrincipal} className="mb-6"
                           pestanas={[{ key: 'resenas', label: 'Reseñas' }, { key: 'anotaciones', label: 'Anotaciones' }]} />
 
-                {/* Contenido de Reseñas */}
                 {tabPrincipal === 'resenas' && (
                     <div className="mb-12">
                         <Filtros opciones={opcionesFiltro} activo={subTabResenas} onCambiar={setSubTabResenas} />
@@ -421,7 +401,6 @@ export default function LibroDetalle() {
                     </div>
                 )}
 
-                {/* Contenido de Anotaciones */}
                 {tabPrincipal === 'anotaciones' && (
                     <div className="mb-12">
                         <Filtros opciones={opcionesFiltro} activo={subTabAnotaciones} onCambiar={setSubTabAnotaciones} />
@@ -481,7 +460,6 @@ export default function LibroDetalle() {
 
             {mostrarListas && <GuardarEnListaModal idlibro={parseInt(id)} onClose={() => setMostrarListas(false)} />}
 
-            {/* Confirmación de empezar a leer */}
             {mostrarConfirmacion && (
                 <Dialogo titulo={estadoLibro === 'LEIDO' ? '¿Lo relees?' : '¿Empiezas a leerlo?'} onCerrar={() => setMostrarConfirmacion(false)}
                          acciones={<>

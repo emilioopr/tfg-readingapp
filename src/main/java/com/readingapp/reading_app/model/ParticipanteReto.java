@@ -18,7 +18,6 @@ public class ParticipanteReto {
     @Builder.Default
     private Integer progreso = 0;
 
-    /*Lo leído el día de la unión antes de unirse: los seguimientos solo guardan el día, así que se resta aparte.*/
     @Column(name = "progreso_inicial")
     @Builder.Default
     private Integer progresoInicial = 0;

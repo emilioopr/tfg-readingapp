@@ -36,8 +36,8 @@ public class LibroDTO {
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
     public static class BusquedaResponse {
-        private Long idlibro;        // null si es externo
-        private String idExterno;    // id de Google Books
+        private Long idlibro;
+        private String idExterno;
         private String titulo;
         private String nombreAutor;
         private String portada;
@@ -62,7 +62,6 @@ public class LibroDTO {
         private Long idautor;
         private Double notaMedia;
         private Integer numResenas;
-        /** Reseñas públicas + puntuaciones sin reseña: las que cuentan para la nota media. */
         private Integer numValoraciones;
         private Double ritmoMedio;
         private Map<String, Long> distribucionNotas;

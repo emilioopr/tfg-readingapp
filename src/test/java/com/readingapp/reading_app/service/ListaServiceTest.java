@@ -101,7 +101,6 @@ class ListaServiceTest {
         listaService.darLike(20L);
 
         verify(likeListaRepository, times(1)).save(any(LikeLista.class));
-        // Es su propia lista: no se avisa a sí misma
         verify(notificacionService, never()).crearNotificacionLikeLista(any(), any());
     }
 

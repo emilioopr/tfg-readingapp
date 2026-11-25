@@ -8,7 +8,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const mismoDia = (a, b) => a.toDateString() === b.toDateString()
 
-/** "Hoy", "Ayer" o fecha corta, para separadores del chat y la lista. */
 const etiquetaDia = (fecha) => {
     const d = new Date(fecha)
     const hoy = new Date()
@@ -20,7 +19,6 @@ const etiquetaDia = (fecha) => {
     })
 }
 
-/** En la lista: la hora si es de hoy, si no el día. */
 const fechaCorta = (fecha) => {
     const d = new Date(fecha)
     return mismoDia(d, new Date())
@@ -42,7 +40,6 @@ function IconoCarta({ className }) {
     return <EnvelopeSimple className={className} weight="light" />
 }
 
-/** Agrupa las recomendaciones por la otra persona; la conversación más reciente primero. */
 function agrupar(todas, idUsuario) {
     const mapa = {}
     todas.forEach((r) => {
@@ -77,7 +74,6 @@ export default function Recomendaciones() {
     const conversaciones = agrupar(todas, usuario.id)
     const seleccionado = conversaciones.find(c => c.id === seleccionadoId)
 
-    /** Abre una conversación y marca como vistas las recomendaciones recibidas en ella. */
     const abrir = async (conversacion) => {
         setSeleccionadoId(conversacion.id)
         const pendientes = conversacion.mensajes.filter(m => m.idusuarioReceptor === usuario.id && !m.visto)
@@ -98,7 +94,6 @@ export default function Recomendaciones() {
                 ])
                 const datos = [...(recRes.data.content || recRes.data || []), ...(envRes.data.content || envRes.data || [])]
                 setTodas(datos)
-                // En escritorio se abre la conversación más reciente al entrar
                 const primera = agrupar(datos, usuario.id)[0]
                 if (primera && window.matchMedia('(min-width: 768px)').matches) abrir(primera)
             } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se han podido cargar tus recomendaciones.') } finally { setLoading(false) }
@@ -133,7 +128,6 @@ export default function Recomendaciones() {
             <h1 className="font-serif text-4xl leading-none text-texto mb-6">Recomendaciones</h1>
 
             <div className="flex gap-4 h-[calc(100vh-200px)] min-h-[420px]">
-                {/* Lista de conversaciones */}
                 <div className={`w-full md:w-80 flex-shrink-0 border border-linea rounded overflow-y-auto p-1.5 ${seleccionado ? 'hidden md:block' : ''}`}>
                     {conversaciones.map((c) => {
                         const activa = seleccionado?.id === c.id
@@ -164,7 +158,6 @@ export default function Recomendaciones() {
                     })}
                 </div>
 
-                {/* Conversación */}
                 <div className={`flex-1 border border-linea rounded flex-col overflow-hidden ${seleccionado ? 'flex' : 'hidden md:flex'}`}>
                     {!seleccionado ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">

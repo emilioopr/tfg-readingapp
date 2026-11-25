@@ -7,7 +7,6 @@ import java.util.List;
 public class CatalogoDTO {
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-    /*Datos mínimos de un libro para las filas del catálogo (sin las estadísticas del detalle).*/
     public static class LibroResumen {
         private Long idlibro;
         private String titulo;
@@ -17,14 +16,14 @@ public class CatalogoDTO {
         private String categoria;
         private Double notaMedia;
         private Integer numResenas;
-        private String sinopsis; // solo en el libro destacado
+        private String sinopsis;
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
     public static class Fila {
         private String clave;
         private String titulo;
-        private String slugCategoria; // si la fila es una categoría, para el enlace "Ver todo"
+        private String slugCategoria;
         private List<LibroResumen> libros;
     }
 
@@ -36,7 +35,6 @@ public class CatalogoDTO {
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-    /*Una página de libros de una categoría ("Ver todo").*/
     public static class PaginaCategoria {
         private String slug;
         private String nombre;

@@ -20,7 +20,7 @@ public class RachaDTO {
     public static class DiaSemana {
         private String fecha;
         private String letra;
-        private String estado;   // LEIDO, PROTEGIDO, PENDIENTE, VACIO, FUTURO
+        private String estado;
         private Boolean esHoy;
     }
 }

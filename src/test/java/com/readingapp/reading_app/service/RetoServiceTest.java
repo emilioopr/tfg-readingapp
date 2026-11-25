@@ -74,8 +74,6 @@ class RetoServiceTest {
         SecurityContextHolder.clearContext();
     }
 
-    // ===== Helpers =====
-
     private Reto reto(Long id, TipoReto tipo, ModalidadReto modalidad, int meta) {
         Reto reto = Reto.builder()
                 .idreto(id).titulo("Reto de prueba").tipo(tipo).modalidad(modalidad).meta(meta)
@@ -112,8 +110,6 @@ class RetoServiceTest {
         when(seguimientoRepository.countByUsuarioIdusuarioAndEstadoAndFechaBetween(
                 eq(ID_USUARIO), eq(EstadoLectura.LEIDO), any(), any())).thenReturn(cantidad);
     }
-
-    // ===== Creación =====
 
     @Nested
     @DisplayName("Creación de retos")
@@ -169,8 +165,6 @@ class RetoServiceTest {
         }
     }
 
-    // ===== Participación =====
-
     @Nested
     @DisplayName("Unirse y abandonar")
     class Participacion {
@@ -192,7 +186,7 @@ class RetoServiceTest {
         void unirseCalculaProgreso() {
             reto(1L, TipoReto.LIBROS, ModalidadReto.COMPARTIDO, 5);
             when(participanteRetoRepository.existsByRetoIdretoAndUsuarioIdusuario(1L, ID_USUARIO)).thenReturn(false);
-            librosLeidos(2); // terminados hoy, antes de unirse
+            librosLeidos(2);
 
             RetoDTO.ParticipanteResponse res = retoService.unirse(1L, ID_USUARIO);
 
@@ -203,8 +197,8 @@ class RetoServiceTest {
         @Test
         @DisplayName("Solo cuenta lo leído desde que te unes, no desde que empezó el reto")
         void progresoDesdeLaUnion() {
-            Reto reto = reto(1L, TipoReto.LIBROS, ModalidadReto.PREDEFINIDO, 5); // empezó hace 10 días
-            participante(reto, usuario, false); // se unió hoy
+            Reto reto = reto(1L, TipoReto.LIBROS, ModalidadReto.PREDEFINIDO, 5);
+            participante(reto, usuario, false);
             librosLeidos(1);
 
             retoService.recalcularProgreso(1L, ID_USUARIO);
@@ -267,8 +261,6 @@ class RetoServiceTest {
         }
     }
 
-    // ===== Progreso =====
-
     @Nested
     @DisplayName("Cálculo de progreso")
     class Progreso {
@@ -296,8 +288,8 @@ class RetoServiceTest {
 
             RetoDTO.ParticipanteResponse res = retoService.recalcularProgreso(1L, ID_USUARIO);
 
-            assertThat(res.getProgreso()).isEqualTo(90);   // minutos
-            assertThat(res.getMeta()).isEqualTo(2);        // horas
+            assertThat(res.getProgreso()).isEqualTo(90);
+            assertThat(res.getMeta()).isEqualTo(2);
             assertThat(res.getPorcentaje()).isEqualTo(75.0);
             assertThat(res.getRetoCumplido()).isFalse();
         }
@@ -374,7 +366,6 @@ class RetoServiceTest {
 
             assertThat(p1.getRetoCumplido()).isTrue();
             assertThat(p2.getRetoCumplido()).isTrue();
-            // Cada participante recibe su aviso
             verify(notificacionService).crearNotificacionRetoCumplido(reto, usuario);
             verify(notificacionService).crearNotificacionRetoCumplido(reto, otro);
         }
@@ -398,8 +389,6 @@ class RetoServiceTest {
             assertThat(p2.getProgreso()).isEqualTo(300);
         }
     }
-
-    // ===== Retos terminados =====
 
     @Nested
     @DisplayName("Retos terminados")
@@ -462,8 +451,6 @@ class RetoServiceTest {
             verify(participanteRetoRepository).findActivosDeUsuario(ID_USUARIO, HOY, pagina);
         }
     }
-
-    // ===== Eliminación =====
 
     @Nested
     @DisplayName("Eliminación")

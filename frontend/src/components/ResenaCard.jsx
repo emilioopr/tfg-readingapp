@@ -45,7 +45,6 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
         } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido guardar el me gusta.') }
     }
 
-    // El detalle de una reseña requiere cuenta
     const irADetalle = () => {
         navigate(usuario ? `/resena/${resena.idresena}` : '/login')
     }
@@ -64,7 +63,6 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
     return (
         <article onClick={irADetalle} onKeyDown={(e) => { if (e.key === 'Enter') irADetalle() }} tabIndex={0}
                  className="group/resena flex gap-5 py-6 border-b border-linea cursor-pointer focus-visible:outline-offset-4">
-            {/* Portada del libro */}
             {mostrarLibro && (
                 <div className="group flex-shrink-0 self-start"
                      onClick={(e) => { e.stopPropagation(); navigate(`/libro/${resena.idlibro}`) }}>
@@ -82,13 +80,11 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
                                 {resena.tituloLibro}
                             </button>
                         )}
-                        {/* Nota discreta */}
                         <div className="scale-75 origin-left -my-0.5">
                             <Estrellas puntuacion={resena.puntuacion} />
                         </div>
                     </div>
 
-                    {/* Autor, pequeño, arriba a la derecha */}
                     {mostrarUsuario && (
                         <button className="flex items-center gap-2 flex-shrink-0 text-texto-sec hover:text-acento"
                                 onClick={(e) => { e.stopPropagation(); navigate(`/usuario/${resena.idusuario}`) }}>
@@ -115,7 +111,6 @@ export default function ResenaCard({ resena: resenaInicial, mostrarLibro = true,
                     <p className="text-acento text-xs mt-1">Marcada con spoilers</p>
                 )}
 
-                {/* Pie: me gusta, acciones y fecha */}
                 <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center gap-4 text-xs">
                         <button onClick={toggleLike} disabled={!usuario || resena.idusuario === usuario?.id}

@@ -39,7 +39,7 @@ export default function Notificaciones() {
     }
 
     const eliminar = async (e, id) => {
-        e.stopPropagation() // que no abra la notificación
+        e.stopPropagation()
         try {
             await api.delete(`/notificaciones/${id}`)
             setNotificaciones(prev => prev.filter(n => n.idnotificacion !== id))
@@ -110,7 +110,6 @@ export default function Notificaciones() {
                         <div key={n.idnotificacion} onClick={() => handleClick(n)} tabIndex={0}
                              onKeyDown={(e) => { if (e.key === 'Enter') handleClick(n) }}
                              className={`relative py-4 pl-5 pr-1 cursor-pointer hover:bg-superficie/60 ${n.leida ? 'text-texto-sec' : 'text-texto'}`}>
-                            {/* Sin leer: un punto de acento a la izquierda */}
                             {!n.leida && <span aria-label="Sin leer" className="absolute left-0 top-[1.4rem] w-1.5 h-1.5 bg-acento rounded-full" />}
                             <div className="flex items-start justify-between gap-3">
                                 <p className="text-[15px] leading-snug">

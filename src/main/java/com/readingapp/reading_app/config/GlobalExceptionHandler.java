@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/*handler global para cualquier parte de la aplicacion*/
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,26 +41,21 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
     }
 
-    /*se activa cuando fallan las validaciones de los DTOs*/
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
-        /*Recoge todos los errores de validación con getFieldErrors()*/
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errores.put(error.getField(), error.getDefaultMessage())
         );
 
-        /*genera la respuesta*/
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("errores", errores);
-        // El frontend muestra "mensaje": sin él solo se vería un error genérico sin decir qué campo falla
         body.put("mensaje", String.join(". ", errores.values()));
         return ResponseEntity.badRequest().body(body);
     }
 
-    /*es un método auxiliar que usado por handleNotFound y handleBadRequest*/
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String mensaje) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());

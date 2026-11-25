@@ -22,10 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-/**
- * Puntuar un libro desde su ficha sin escribir reseña ("lo leí hace tiempo").
- * Si el libro no estaba como leído, queda marcado como lectura antigua, que no cuenta para retos ni racha.
- */
 @Service
 @RequiredArgsConstructor
 public class ValoracionService {
@@ -36,14 +32,12 @@ public class ValoracionService {
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
 
-    /** La valoración del usuario de la sesión para un libro, si la tiene. */
     @Transactional(readOnly = true)
     public Optional<ValoracionDTO.Response> obtenerMia(Long idlibro) {
         return valoracionRepository.findByUsuarioIdusuarioAndLibroIdlibro(SecurityUtils.getUsuarioAutenticadoId(), idlibro)
                 .map(this::toResponse);
     }
 
-    /** Crea o cambia la puntuación del usuario de la sesión para un libro. */
     @Transactional
     public ValoracionDTO.Response valorar(Long idlibro, BigDecimal puntuacion) {
         if (puntuacion == null || puntuacion.remainder(new BigDecimal("0.5")).signum() != 0) {
@@ -66,7 +60,6 @@ public class ValoracionService {
             throw new IllegalArgumentException("Lo estás leyendo: podrás puntuarlo cuando lo termines");
         }
         if (estado != EstadoLectura.LEIDO) {
-            // Leído hace tiempo: pasa a la estantería de leídos sin contar para retos, racha ni páginas
             seguimientoRepository.save(Seguimiento.builder().usuario(usuario).libro(libro)
                     .estado(EstadoLectura.LEIDO).numPagina(0).fecha(LocalDate.now()).lecturaAntigua(true).build());
         }
@@ -78,7 +71,6 @@ public class ValoracionService {
         return toResponse(valoracionRepository.save(valoracion));
     }
 
-    /** Quita la puntuación. Si al puntuar se marcó como lectura antigua, esa marca también se deshace. */
     @Transactional
     public void quitar(Long idlibro) {
         Long idusuario = SecurityUtils.getUsuarioAutenticadoId();

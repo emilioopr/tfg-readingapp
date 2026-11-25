@@ -12,7 +12,6 @@ const MODALIDAD = { PERSONAL: 'Personal', COMPARTIDO: 'Con amigos', PREDEFINIDO:
 const TIPO = { LIBROS: 'Libros', PAGINAS: 'Páginas', HORAS: 'Horas' }
 const UNIDAD = { LIBROS: 'libros', PAGINAS: 'páginas', HORAS: 'horas' }
 
-/** Línea fina de progreso, como la de lectura. */
 function BarraProgreso({ porcentaje = 0 }) {
     return (
         <div className="relative h-[2px] bg-linea">
@@ -21,7 +20,6 @@ function BarraProgreso({ porcentaje = 0 }) {
     )
 }
 
-/** Tipo y modalidad, como texto discreto. */
 function Etiquetas({ tipo, modalidad }) {
     return (
         <p className="text-xs text-texto-sec mt-1">
@@ -71,7 +69,6 @@ function TarjetaActivo({ p, onAbandonar }) {
                     <h3 className="font-serif text-xl leading-snug text-texto">{p.tituloReto}</h3>
                     <Etiquetas tipo={p.tipoReto} modalidad={p.modalidadReto} />
                 </div>
-                {/* Un reto personal es un compromiso contigo mismo: no se abandona */}
                 {esGrupal && (
                     <button onClick={() => onAbandonar(p.idreto)} className="text-texto-ter hover:text-error text-xs flex-shrink-0">
                         Abandonar
@@ -172,12 +169,9 @@ export default function Retos() {
         } catch (err) { avisar(err.response?.data?.mensaje || 'Algo ha fallado. Inténtalo de nuevo.') }
     }
 
-    // Explorar: oficiales y colaborativos para todos; compartidos solo de amigos
-    // Fuera los retos en los que ya estás, tanto en curso como completados
     const idsMios = new Set([...activos.map(a => a.idreto), ...logros.map(l => l.idreto)])
     const explorables = disponibles.filter(r => !idsMios.has(r.idreto))
     const comunidad = explorables.filter(r => r.modalidad === 'PREDEFINIDO' || r.modalidad === 'COLABORATIVO')
-    // Los tuyos también, por si creaste alguno antes de que el creador participara automáticamente
     const deAmigos = explorables.filter(r => r.modalidad === 'COMPARTIDO'
         && (seguidos.includes(r.idCreador) || r.idCreador === usuario.id))
 
@@ -245,7 +239,6 @@ export default function Retos() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
                         {logros.map((l) => (
                             <article key={l.idreto} className="flex items-center gap-5 py-6 border-b border-linea">
-                                {/* Sello de ex libris con la meta cumplida */}
                                 <Sello numero={l.meta} etiqueta={UNIDAD[l.tipo] || ''} className="w-20 h-20 flex-shrink-0" />
                                 <div className="min-w-0">
                                     <h3 className="font-serif text-lg leading-snug text-texto">{l.tituloReto}</h3>

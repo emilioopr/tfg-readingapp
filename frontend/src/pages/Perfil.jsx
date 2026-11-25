@@ -13,8 +13,6 @@ import Balda from '../components/Balda'
 import Carrusel from '../components/Carrusel'
 import { useAvisos } from '../context/AvisosContext'
 
-/** Formato corto para contadores: 950 → 950, 1.234 → 1,2K, 1.500.000 → 1,5M.
- *  Se trunca (no redondea) para no mostrar más de lo que hay, p. ej. 999.999 → 999,9K. */
 const formatoCorto = (n) => {
     if (n == null) return 0
     const corto = (valor, sufijo) =>
@@ -38,8 +36,6 @@ export default function Perfil() {
     const [siguiendo, setSiguiendo] = useState(false)
     const [loading, setLoading] = useState(true)
     const [listasPublicas, setListasPublicas] = useState([])
-    // La pestaña va en la URL (?tab=...): así los enlaces del menú funcionan aunque ya estés en el perfil,
-    // y recargar la página mantiene la pestaña
     const [searchParams, setSearchParams] = useSearchParams()
     const tab = searchParams.get('tab') || 'libros'
     const setTab = (t) => setSearchParams(t === 'libros' ? {} : { tab: t }, { replace: true })
@@ -50,7 +46,6 @@ export default function Perfil() {
     const [estadisticas, setEstadisticas] = useState(null)
     const [racha, setRacha] = useState(null)
     const [leyendoIndex, setLeyendoIndex] = useState(0)
-
 
     const cargarPerfil = useCallback(async () => {
         try { const res = await api.get(`/usuarios/${perfilId}`); setPerfil(res.data) }
@@ -88,7 +83,6 @@ export default function Perfil() {
 
     const cargarListasPublicas = useCallback(async () => {
         try {
-            // El backend ya devuelve solo las públicas si el perfil no es tuyo
             const res = await api.get(`/listas/usuario/${perfilId}`)
             setListasPublicas(res.data.content || res.data || [])
         } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar todo el perfil. Puede que falten partes.') }
@@ -119,7 +113,6 @@ export default function Perfil() {
         } catch (err) { console.error('Error:', err) }
     }, [esMio, perfilId, usuario])
 
-    // Libros de una balda de la estantería (LEYENDO, LEIDO, PENDIENTE o ABANDONADO)
     const cargarBalda = useCallback(async (estado, guardar) => {
         try {
             const res = await api.get(`/seguimientos/usuario/${perfilId}/estado/${estado}`)
@@ -132,7 +125,6 @@ export default function Perfil() {
         catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar todo el perfil. Puede que falten partes.') }
     }, [avisarCarga, perfilId])
 
-    // Solo consulta: ver la racha de alguien no la modifica
     const cargarRacha = useCallback(async () => {
         try { const res = await api.get(`/racha/usuario/${perfilId}`); setRacha(res.data) }
         catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar todo el perfil. Puede que falten partes.') }
@@ -172,7 +164,6 @@ export default function Perfil() {
         { key: 'listas', label: 'Listas' },
     ]
 
-    // Seguimientos -> libros para las baldas
     const aBalda = (lista) => lista.map((s) => ({
         key: s.idseguimiento, idlibro: s.idlibro, titulo: s.tituloLibro, autor: s.nombreAutor, portada: s.portadaLibro,
     }))
@@ -190,7 +181,6 @@ export default function Perfil() {
     return (
         <div className="max-w-5xl mx-auto">
 
-            {/* Cabecera: nombre en serif grande; cifras y lectura actual en el margen */}
             <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12 pt-2">
                 <div className="flex items-start gap-5 min-w-0">
                     {perfil.avatar ? (
@@ -223,7 +213,6 @@ export default function Perfil() {
                                     {racha.racha === 1 ? 'día' : 'días'} seguidos leyendo
                                 </span>
                             )}
-                            {/* Insignias: hitos de mejor racha alcanzados (7, 30, 100 y 365 días) */}
                             {racha?.insignias?.length > 0 && (
                                 <ul className="flex flex-wrap gap-2" aria-label="Insignias de racha">
                                     {racha.insignias.map(dias => (
@@ -239,7 +228,6 @@ export default function Perfil() {
                 </div>
 
                 <div className="md:w-72 flex-shrink-0 space-y-6">
-                    {/* Cifras */}
                     {estadisticas && (
                         <dl className="flex gap-6">
                             {[
@@ -255,7 +243,6 @@ export default function Perfil() {
                         </dl>
                     )}
 
-                    {/* Leyendo ahora */}
                     <div className="border-t border-linea pt-4">
                         <div className="flex items-center justify-between mb-3">
                             <span className="etiqueta">Leyendo ahora</span>
@@ -288,13 +275,10 @@ export default function Perfil() {
                 </div>
             </header>
 
-            {/* En móvil las pestañas no caben: se desplazan con el dedo */}
             <Pestanas pestanas={tabs} activa={tab} onCambiar={setTab} className="mb-10" desplazable centradas />
 
-            {/* Tab: Libros */}
             {tab === 'libros' && (
                 <>
-                    {/* Favoritos: cinco portadas a todo el ancho */}
                     <section className="mb-14">
                         <h2 className="etiqueta mb-6">Libros favoritos</h2>
                         <div className="grid grid-cols-5 gap-3 sm:gap-5">
@@ -322,7 +306,6 @@ export default function Perfil() {
                         </div>
                     </section>
 
-                    {/* Lecturas recientes: de cinco en cinco, alineadas con los favoritos */}
                     <section className="mb-12">
                         {leidosLibros.length === 0 ? (
                             <>
@@ -344,7 +327,6 @@ export default function Perfil() {
                 </>
             )}
 
-            {/* Tab: Estantería, con los libros sobre sus baldas */}
             {tab === 'estanteria' && (
                 <div className="space-y-14">
                     {estanterias.filter((e) => !(e.ocultarSiVacio && e.libros.length === 0)).map((e) => (
@@ -363,7 +345,6 @@ export default function Perfil() {
                 </div>
             )}
 
-            {/* Tab: Reseñas */}
             {tab === 'resenas' && (
                 resenas.length === 0 ? (
                     vacio(esMio ? 'Todavía no has escrito ninguna reseña.' : 'No tiene reseñas públicas.')
@@ -376,7 +357,6 @@ export default function Perfil() {
                 )
             )}
 
-            {/* Tab: Anotaciones */}
             {tab === 'anotaciones' && (
                 anotaciones.length === 0 ? (
                     vacio(esMio ? 'Todavía no has escrito en los márgenes.' : 'Todavía no ha escrito en los márgenes.')
@@ -410,12 +390,10 @@ export default function Perfil() {
                 )
             )}
 
-            {/* Tab: Mural de citas (citas de otros lectores que ha elegido exhibir) */}
             {tab === 'citas' && (
                 <MuralCitas perfilId={perfilId} esMio={esMio} usuario={usuario} />
             )}
 
-            {/* Tab: Listas */}
             {tab === 'listas' && (
                 listasPublicas.length === 0 ? (
                     <div>

@@ -8,7 +8,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const TAMANIO = 20
 
-/** Toda la actividad de las personas que sigues, de 20 en 20. */
 export default function Actividad() {
     const { avisarCarga } = useAvisos()
     const { usuario } = useAuth()

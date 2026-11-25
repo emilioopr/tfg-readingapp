@@ -9,7 +9,6 @@ import api from '../api/axios'
 import { RachaNavbar } from './Racha'
 import { useNotificaciones } from '../context/NotificacionesContext'
 
-// Enlaces principales. Sin sesión solo se muestra lo que funciona sin cuenta: libros y reseñas públicas.
 const PRINCIPALES = [
     { ruta: '/catalogo', nombre: 'Explorar', publica: true },
     { ruta: '/resenas', nombre: 'Reseñas', publica: true },
@@ -23,7 +22,6 @@ const PRINCIPALES = [
 const claseEnlace = ({ isActive }) =>
     `text-sm whitespace-nowrap transition-colors ${isActive ? 'text-acento' : 'text-texto-sec hover:text-texto'}`
 
-/** Cierra un desplegable al hacer clic fuera de él. */
 function useClicFuera(ref, alSalir) {
     useEffect(() => {
         const manejar = (e) => { if (ref.current && !ref.current.contains(e.target)) alSalir() }
@@ -72,7 +70,6 @@ export default function Navbar() {
     const navigate = useNavigate()
     const location = useLocation()
 
-    // Al cambiar de página se cierran los menús
     useEffect(() => {
         setMenuMovilAbierto(false)
         setBuscadorMovil(false)
@@ -105,12 +102,10 @@ export default function Navbar() {
     return (
         <nav className="bg-fondo border-b border-linea sticky top-0 z-50 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto h-14 flex items-center gap-6">
-                {/* Logo: la cinta del marcapáginas y el nombre en serif */}
                 <Link to="/" className="flex items-center gap-2 flex-shrink-0 text-texto hover:text-texto" aria-label="Bookmark, inicio">
                     <span className="font-serif text-2xl leading-none tracking-tight">Bookmark</span>
                 </Link>
 
-                {/* Enlaces principales (pantallas grandes) */}
                 <div className="hidden lg:flex items-center gap-4 xl:gap-6">
                     {principales.map((e) => (
                         <NavLink key={e.ruta} to={e.ruta} className={claseEnlace}>{e.nombre}</NavLink>
@@ -118,7 +113,6 @@ export default function Navbar() {
                 </div>
 
                 <div className="ml-auto flex items-center gap-3 sm:gap-5 min-w-0">
-                    {/* Buscador visible en pantallas grandes; en móvil, un botón que lo abre debajo */}
                     <Buscador onBuscar={buscar} className="hidden lg:block w-44 xl:w-64" />
                     <button onClick={() => setBuscadorMovil(v => !v)} className="lg:hidden text-texto-sec hover:text-texto"
                             aria-label="Buscar" aria-expanded={buscadorMovil}>
@@ -133,7 +127,6 @@ export default function Navbar() {
                                 <EnvelopeSimple size={20} />
                             </Link>
 
-                            {/* Avatar con su menú; el punto avisa de notificaciones sin leer (están dentro) */}
                             <div className="relative" ref={menuRef}>
                                 <button onClick={() => setMenuAbierto(v => !v)} aria-expanded={menuAbierto} aria-label="Tu menú"
                                         className="flex items-center gap-1 relative">
@@ -190,7 +183,6 @@ export default function Navbar() {
                         </>
                     )}
 
-                    {/* Menú de secciones en móvil */}
                     <button onClick={() => setMenuMovilAbierto(v => !v)} className="lg:hidden text-texto-sec hover:text-texto"
                             aria-label="Menú" aria-expanded={menuMovilAbierto}>
                         {menuMovilAbierto ? <X size={22} /> : <List size={22} />}
@@ -211,7 +203,6 @@ export default function Navbar() {
                     ))}
                     {usuario && (
                         <>
-                            {/* En móvil el sobre no cabe en la barra */}
                             <NavLink to="/recomendaciones" className={({ isActive }) => `sm:hidden py-2.5 ${claseEnlace({ isActive })}`}>Recomendaciones</NavLink>
                         </>
                     )}

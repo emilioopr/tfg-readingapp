@@ -147,7 +147,7 @@ class ActividadServiceTest {
     void pideLosEventosNecesarios() {
         actividadService.obtenerDeSeguidos(1L, 1, 5);
 
-        PageRequest onceEventos = PageRequest.of(0, 11); // 2 páginas de 5 + 1 para saber si hay más
+        PageRequest onceEventos = PageRequest.of(0, 11);
         verify(seguimientoRepository).findActividadDeSeguidos(eq(1L), any(), eq(onceEventos));
         verify(resenaRepository).findResenasDeSeguidos(1L, onceEventos);
         verify(participanteRetoRepository).findRetosCumplidosDeSeguidos(eq(1L), any(), eq(onceEventos));

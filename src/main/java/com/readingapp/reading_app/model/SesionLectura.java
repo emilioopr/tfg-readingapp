@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-/** Sesión de lectura del temporizador: solo tiempo (cuenta para la racha y los retos de horas), sin libro. */
 @Entity
 @Table(name = "sesion_lectura", indexes = @Index(name = "idx_sesion_usuario", columnList = "id_usuario, inicio"))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

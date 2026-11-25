@@ -73,7 +73,6 @@ public class AnotacionService {
         return toResponse(anotacion);
     }
 
-    /*El propio usuario ve todas sus anotaciones; los demás solo las públicas.*/
     public List<AnotacionDTO.Response> obtenerPorUsuario(Long idusuario, Pageable pageable) {
         List<Anotacion> anotaciones = SecurityUtils.esUsuarioActual(idusuario)
                 ? anotacionRepository.findByUsuarioIdusuarioOrderByFechaDescIdanotacionDesc(idusuario, pageable)
@@ -130,7 +129,6 @@ public class AnotacionService {
         return anotacionRepository.findByLibroIdlibroAndEsPublicaTrueOrderByFechaDescIdanotacionDesc(idlibro, pageable)
                 .stream().map(this::toResponse).toList();
     }
-    // === HELPERS ===
 
     private Anotacion buscarPorId(Long id) {
         return anotacionRepository.findById(id)

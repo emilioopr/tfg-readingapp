@@ -33,10 +33,8 @@ public class GoogleBooksService {
     @Value("${google.books.api.key}")
     private String apiKey;
 
-    // Caché de búsquedas: cada entrada es la respuesta de una petición (consulta + página)
     private static final Duration DURACION_CACHE = Duration.ofHours(6);
     private static final int MAX_ENTRADAS_CACHE = 1000;
-    /** Posición de una búsqueda de Google que ya no tiene más resultados. */
     public static final int AGOTADA = -1;
     private record EntradaCache(List<Map<String, Object>> items, Instant caduca) {}
     private final Map<String, EntradaCache> cacheBusquedas = new ConcurrentHashMap<>();
@@ -47,8 +45,6 @@ public class GoogleBooksService {
             "https://www.googleapis.com/books/v1/volumes?q={query}&startIndex={startIndex}&maxResults=40&printType=books&key={key}";
     private static final String GOOGLE_VOLUME_URL =
             "https://www.googleapis.com/books/v1/volumes/{id}?key={key}";
-
-    // ==================== CARGA MASIVA (ADMIN) ====================
 
     public int importarPorCategoria(String query, int cantidad, String idioma) {
         int importados = 0;
@@ -97,7 +93,6 @@ public class GoogleBooksService {
         Map<String, Integer> resultado = new LinkedHashMap<>();
 
         for (String categoria : categorias) {
-            // Entre comillas para que una categoría de varias palabras ("True Crime") se busque entera
             String query = "subject:\"" + categoria.replace("\"", "") + "\"";
             int importados = importarPorCategoria(query, cantidadPorCategoria, idioma);
             resultado.put(categoria, importados);
@@ -133,23 +128,12 @@ public class GoogleBooksService {
         }
     }
 
-    // ==================== BÚSQUEDA (SIN GUARDAR) ====================
-
-    /**
-     * Busca en Google Books SIN guardar nada. Excluye los libros que ya existen en local.
-     *
-     * Cada tanda continúa la búsqueda por título ("intitle") y por autor ("inauthor") hasta que se agotan, porque
-     * son las que mejor coinciden; la búsqueda general solo rellena cuando no dan para una tanda decente.
-     * Recibe la posición por la que sigue cada búsqueda (AGOTADA si ya no tiene más) y devuelve las siguientes.
-     * El resultado se reordena por relevancia propia (ver {@link RelevanciaBusqueda}) con una sola edición de cada obra.
-     */
     public Map<String, Object> buscarEnGoogle(String query, int titulo, int autor, int general) {
         List<Map<String, Object>> candidatos = new ArrayList<>();
         String frase = "\"" + query.replace("\"", "") + "\"";
 
         if (titulo != AGOTADA) {
             List<Map<String, Object>> items = pedirGoogle("intitle:" + frase, titulo);
-            // Google Books a veces responde vacío de forma puntual: se reintenta una vez porque es la búsqueda que más aporta
             if (items.isEmpty()) items = pedirGoogle("intitle:" + frase, titulo);
             titulo = items.isEmpty() ? AGOTADA : titulo + items.size();
             candidatos.addAll(items);
@@ -160,7 +144,6 @@ public class GoogleBooksService {
             candidatos.addAll(items);
         }
 
-        // La búsqueda general rellena hasta tener una tanda decente (como mucho 3 peticiones)
         int peticiones = 0;
         while (general != AGOTADA && candidatos.size() < 20 && peticiones < 3) {
             peticiones++;
@@ -174,10 +157,6 @@ public class GoogleBooksService {
                 "hayMas", titulo != AGOTADA || autor != AGOTADA || general != AGOTADA);
     }
 
-    /**
-     * Una petición a Google Books, con caché en memoria: las búsquedas repetidas ("harry potter", "el principito"...)
-     * no gastan cuota y responden al instante. Las respuestas vacías no se guardan, porque a veces son fallos puntuales.
-     */
     private List<Map<String, Object>> pedirGoogle(String query, int startIndex) {
         String clave = query.trim().toLowerCase() + "|" + startIndex;
         EntradaCache enCache = cacheBusquedas.get(clave);
@@ -203,7 +182,6 @@ public class GoogleBooksService {
         cacheBusquedas.put(clave, new EntradaCache(items, Instant.now().plus(DURACION_CACHE)));
     }
 
-    /** Quita repetidos, libros ya existentes en local y ediciones duplicadas; ordena por relevancia. */
     private List<LibroDTO.BusquedaResponse> ordenarPorRelevancia(List<Map<String, Object>> items, String query) {
         record Valido(LibroDTO.BusquedaResponse libro, Map<String, Object> info, int posicion) {}
         record Puntuado(LibroDTO.BusquedaResponse libro, double puntos, int posicion) {}
@@ -235,10 +213,8 @@ public class GoogleBooksService {
             puntuados.add(new Puntuado(v.libro(), puntos, v.posicion()));
         }
 
-        // Mejor puntuación primero; a igualdad, se respeta el orden de Google
         puntuados.sort(Comparator.comparingDouble(Puntuado::puntos).reversed().thenComparingInt(Puntuado::posicion));
 
-        // Una sola edición por obra: la mejor puntuada
         List<LibroDTO.BusquedaResponse> resultado = new ArrayList<>();
         for (Puntuado p : puntuados) {
             LibroDTO.BusquedaResponse libro = p.libro();
@@ -249,7 +225,6 @@ public class GoogleBooksService {
         return resultado;
     }
 
-    /** Importa UN libro concreto cuando el usuario lo abre. Devuelve su id local. */
     @Transactional
     public Long importarPorIdExterno(String idExterno) {
         Map<String, Object> item = restTemplate.getForObject(GOOGLE_VOLUME_URL, Map.class, idExterno, apiKey);
@@ -265,7 +240,6 @@ public class GoogleBooksService {
                 .orElseThrow(() -> new IllegalArgumentException("No se pudo importar el libro"));
     }
 
-    /** Busca si ya existe en local un libro equivalente (mismo id externo, ISBN o título+autor). */
     private Optional<Libro> buscarLocalEquivalente(Map<String, Object> item) {
         String idExterno = (String) item.get("id");
         if (idExterno != null) {
@@ -310,8 +284,6 @@ public class GoogleBooksService {
                 .externo(true)
                 .build();
     }
-
-    // ==================== GUARDADO ====================
 
     private boolean guardarLibro(Map<String, Object> item) {
         Map<String, Object> volumeInfo = (Map<String, Object>) item.get("volumeInfo");
@@ -364,7 +336,6 @@ public class GoogleBooksService {
         libroRepository.save(libro);
         log.info("GUARDADO OK: '{}' de '{}'", titulo, autor.getNombre());
 
-        // Avisa a quien sigue al autor (un autor recién creado todavía no tiene seguidores)
         if (autor.getSeguidoresList() != null) {
             for (Usuario seguidor : autor.getSeguidoresList()) {
                 notificacionService.crearNotificacionNuevoLibro(libro, seguidor);
@@ -391,8 +362,6 @@ public class GoogleBooksService {
                     return autor;
                 });
     }
-
-    // ==================== UTILIDADES ====================
 
     private String extraerPortada(Map<String, Object> volumeInfo) {
         Map<String, Object> imageLinks = (Map<String, Object>) volumeInfo.get("imageLinks");

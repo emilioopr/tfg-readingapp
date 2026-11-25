@@ -7,7 +7,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const TAMANIO_PAGINA = 24
 
-/** Todos los libros de una categoría del catálogo, con "Cargar más". */
 export default function CategoriaCatalogo() {
     const { avisarCarga } = useAvisos()
     const { slug } = useParams()

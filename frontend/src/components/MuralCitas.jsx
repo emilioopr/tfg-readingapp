@@ -6,7 +6,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const TAMANIO = 20
 
-/** Pestaña "Mural de citas" del perfil: las citas de otros lectores que el usuario ha elegido exhibir. */
 export default function MuralCitas({ perfilId, esMio, usuario }) {
     const { avisar, avisarCarga } = useAvisos()
     const [citas, setCitas] = useState([])
@@ -48,7 +47,6 @@ export default function MuralCitas({ perfilId, esMio, usuario }) {
         try {
             if (cita.guardada) await api.delete(`/citas/${cita.idanotacion}/guardar`)
             else await api.post(`/citas/${cita.idanotacion}/guardar`)
-            // En tu perfil, quitarla la saca del mural; en el de otro solo cambia tu marcador
             if (esMio && cita.guardada) {
                 setCitas(prev => prev.filter(c => c.idanotacion !== cita.idanotacion))
             } else {

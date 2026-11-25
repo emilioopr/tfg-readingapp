@@ -1,4 +1,3 @@
-/** Fecha y hora cortas para avisos: "Hoy, 10:05", "Ayer, 18:30" o "29 sept, 10:05" (con el año si no es el actual). */
 export function fechaHoraCorta(fechaIso) {
     const fecha = new Date(fechaIso)
     const hora = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })

@@ -6,14 +6,10 @@ const INTERVALO_MS = 20000
 
 const NotificacionesContext = createContext(null)
 
-/**
- * Una sola consulta periódica de notificaciones no leídas para toda la app:
- * de aquí salen el contador del Navbar y los avisos emergentes (toasts).
- */
 export function NotificacionesProvider({ children }) {
     const { usuario } = useAuth()
     const [noLeidas, setNoLeidas] = useState([])
-    const [cargadas, setCargadas] = useState(false) // ya ha llegado la primera respuesta
+    const [cargadas, setCargadas] = useState(false)
 
     const refrescar = useCallback(async () => {
         if (!usuario) return
@@ -33,7 +29,6 @@ export function NotificacionesProvider({ children }) {
             return
         }
         refrescar()
-        // Con la pestaña en segundo plano no se pregunta (así Neon puede suspender la base de datos); al volver, se refresca
         const intervalo = setInterval(() => { if (!document.hidden) refrescar() }, INTERVALO_MS)
         const alVolver = () => { if (!document.hidden) refrescar() }
         document.addEventListener('visibilitychange', alVolver)
@@ -47,6 +42,5 @@ export function NotificacionesProvider({ children }) {
     )
 }
 
-// El hook vive junto a su Provider (patrón habitual de Context)
 // eslint-disable-next-line react-refresh/only-export-components
 export const useNotificaciones = () => useContext(NotificacionesContext) || { noLeidas: [], cargadas: false, numNoLeidas: 0, refrescar: () => {} }

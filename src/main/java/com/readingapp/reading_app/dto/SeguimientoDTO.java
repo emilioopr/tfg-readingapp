@@ -29,7 +29,6 @@ public class SeguimientoDTO {
         private Double porcentaje;
         private String portadaLibro;
         private String nombreAutor;
-        /** Leído hace tiempo: marcado al puntuarlo desde la ficha, sin seguimiento. */
         private Boolean lecturaAntigua;
     }
 }

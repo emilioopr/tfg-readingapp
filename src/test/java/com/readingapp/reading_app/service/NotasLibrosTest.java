@@ -28,7 +28,6 @@ class NotasLibrosTest {
     @Test
     @DisplayName("Las puntuaciones sin reseña cuentan en la media y en el total de valoraciones, no en el de reseñas")
     void combinaResenasYValoraciones() {
-        // Libro 1: reseñas 4 + 5 (suma 9); valoración 3 -> media 4,0 con 3 valoraciones y 2 reseñas
         when(resenaRepository.findSumasNotasPorLibros(any())).thenReturn(List.<Object[]>of(
                 new Object[]{1L, new BigDecimal("9.0"), 2L, 2L}));
         when(valoracionRepository.findSumasPorLibros(any())).thenReturn(List.<Object[]>of(
@@ -38,7 +37,6 @@ class NotasLibrosTest {
         Map<Long, NotasLibros.Nota> notas = notasLibros.de(List.of(1L, 2L, 3L));
 
         assertThat(notas.get(1L)).isEqualTo(new NotasLibros.Nota(4.0, 3, 2));
-        // Libro solo con una puntuación sin reseña
         assertThat(notas.get(2L)).isEqualTo(new NotasLibros.Nota(2.5, 1, 0));
         assertThat(notas).doesNotContainKey(3L);
     }

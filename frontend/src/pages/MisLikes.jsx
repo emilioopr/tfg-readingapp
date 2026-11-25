@@ -12,7 +12,6 @@ const PESTANAS = [
     { key: 'listas', label: 'Listas' },
 ]
 
-/** Lo que te ha gustado: reseñas y listas. */
 export default function MisLikes() {
     const { avisarCarga } = useAvisos()
     const { usuario } = useAuth()

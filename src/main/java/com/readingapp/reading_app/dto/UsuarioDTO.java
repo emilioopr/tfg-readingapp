@@ -36,14 +36,12 @@ public class UsuarioDTO {
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-    /*Para darse de baja hay que confirmar la contraseña.*/
     public static class EliminarCuentaRequest {
         @NotBlank(message = "La contraseña es obligatoria")
         private String password;
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-    /*Lo que la API devuelve cuando consultas un usuario.*/
     public static class Response {
         private Long idusuario;
         private String nombre;
@@ -54,7 +52,6 @@ public class UsuarioDTO {
     }
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-    /*Estadísticas de lectura que se muestran en la página de perfil.*/
     public static class PerfilResponse {
         private Long idusuario;
         private String nombre;

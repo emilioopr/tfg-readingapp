@@ -10,15 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Nota media de los libros juntando las reseñas públicas y las puntuaciones sin reseña (valoraciones),
- * para que la ficha, los listados y el catálogo la calculen igual.
- */
 @Component
 @RequiredArgsConstructor
 public class NotasLibros {
 
-    /** Media sobre 5 (un decimal), nº total de valoraciones (reseñas + puntuaciones) y nº de reseñas públicas. */
     public record Nota(double media, long valoraciones, long resenas) {}
 
     private final ResenaRepository resenaRepository;
@@ -33,11 +28,8 @@ public class NotasLibros {
         return combinar(resenaRepository.findSumasNotasPorLibro(), valoracionRepository.findSumasPorLibro());
     }
 
-    /**
-     * Reseñas: filas [idlibro, suma, nº con nota, nº de reseñas]. Valoraciones: filas [idlibro, suma, nº].
-     */
     private Map<Long, Nota> combinar(List<Object[]> resenas, List<Object[]> valoraciones) {
-        Map<Long, double[]> acumulado = new HashMap<>(); // idlibro -> {suma, nº con nota, nº de reseñas}
+        Map<Long, double[]> acumulado = new HashMap<>();
         for (Object[] f : resenas) {
             acumulado.put((Long) f[0], new double[]{numero(f[1]), numero(f[2]), numero(f[3])});
         }

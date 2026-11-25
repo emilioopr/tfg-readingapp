@@ -27,7 +27,6 @@ public class AuthService {
 
         Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
         if (usuario == null || !passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
-            // Mismo mensaje exista o no el email, para no revelar qué cuentas existen
             intentosLoginService.registrarFallo(email);
             intentosLoginService.registrarFalloIp(ip);
             throw new BadCredentialsException("Email o contraseña incorrectos");

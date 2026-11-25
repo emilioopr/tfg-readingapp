@@ -24,11 +24,9 @@ public interface ValoracionRepository extends JpaRepository<Valoracion, Long> {
     @Query("DELETE FROM Valoracion v WHERE v.libro.idlibro = :idlibro")
     void borrarDeLibro(@Param("idlibro") Long idlibro);
 
-    /** [idlibro, suma de puntuaciones, nº de valoraciones] de todos los libros. */
     @Query("SELECT v.libro.idlibro, SUM(v.puntuacion), COUNT(v) FROM Valoracion v GROUP BY v.libro.idlibro")
     List<Object[]> findSumasPorLibro();
 
-    /** Igual que la anterior pero solo para los libros indicados. */
     @Query("SELECT v.libro.idlibro, SUM(v.puntuacion), COUNT(v) FROM Valoracion v " +
             "WHERE v.libro.idlibro IN :ids GROUP BY v.libro.idlibro")
     List<Object[]> findSumasPorLibros(@Param("ids") Collection<Long> ids);

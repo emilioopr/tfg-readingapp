@@ -6,10 +6,6 @@ import { Heart, BookmarkSimple } from '@phosphor-icons/react'
 import Portada from './Portada'
 import { useAvisos } from '../context/AvisosContext'
 
-/**
- * Tarjeta de una cita (muro de citas y pestaña "Mural de citas" del perfil).
- * El like lo gestiona la propia tarjeta; guardar lo decide la página (en tu mural, quitarla la saca de la lista).
- */
 export default function TarjetaCita({ cita, esMia, onGuardar }) {
     const { avisar } = useAvisos()
     const [likeada, setLikeada] = useState(!!cita.likeada)
@@ -27,13 +23,11 @@ export default function TarjetaCita({ cita, esMia, onGuardar }) {
     return (
         <article className="break-inside-avoid mb-10 pb-8 border-b border-linea">
             <SpoilerOculto activo={cita.tieneSpoiler && !esMia}>
-                {/* La frase, tal cual */}
                 <blockquote className="font-serif italic text-texto text-[1.4rem] leading-[1.6] whitespace-pre-line">
                     {cita.texto}
                 </blockquote>
             </SpoilerOculto>
 
-            {/* Libro de origen al pie */}
             <div className="flex items-center gap-3 mt-6">
                 <Link to={`/libro/${cita.idlibro}`} className="group flex-shrink-0">
                     <Portada src={cita.portadaLibro} titulo={cita.tituloLibro} id={cita.idlibro} className="w-8" />

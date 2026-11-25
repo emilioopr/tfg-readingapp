@@ -67,7 +67,6 @@ export default function Timer() {
     }
 
     const iniciar = async () => {
-        // El servidor apunta la hora de inicio: así no se pueden guardar más minutos de los que han pasado
         try {
             await api.post('/sesiones-lectura/iniciar')
         } catch (err) {
@@ -136,8 +135,6 @@ export default function Timer() {
         setActivo(false)
         setPausado(false)
 
-        // segundosRef y no el estado: al llegar a cero, terminar() se ejecuta desde el intervalo, que conserva
-        // el valor del estado de cuando se arrancó o reanudó
         const minutosLeidos = modo === 'objetivo'
             ? getTotalMinutosObjetivo() - Math.ceil(segundosRef.current / 60)
             : Math.floor(segundosRef.current / 60)
@@ -154,7 +151,7 @@ export default function Timer() {
                 duracionMinutos: minutosLeidos,
             })
             refrescarRacha()
-            refrescarNotificaciones() // por si la sesión completa un reto de horas
+            refrescarNotificaciones()
             setSesionTerminada(true)
             setGuardado(true)
         } catch (err) {
@@ -182,7 +179,6 @@ export default function Timer() {
         return 0
     }
 
-    // Selector de dos opciones con el mismo aspecto en toda la página
     const opcion = (activa) => `btn flex-1 ${activa ? 'bg-texto text-fondo' : 'border border-linea text-texto-sec hover:text-texto'}`
 
     return (

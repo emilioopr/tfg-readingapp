@@ -1,7 +1,3 @@
-/**
- * Progreso de lectura: la página actual en números grandes (p. 142 / 380) y una línea fina
- * con el tramo leído en acento.
- */
 export default function ProgresoLectura({ pagina = 0, total, porcentaje, grande = true }) {
     const pct = Math.min(100, Math.max(0, porcentaje ?? (total ? Math.round((pagina / total) * 100) : 0)))
     return (

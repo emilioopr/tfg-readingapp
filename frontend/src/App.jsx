@@ -7,7 +7,6 @@ import { NotificacionesProvider } from './context/NotificacionesContext'
 import { AvisosProvider } from './context/AvisosContext'
 import Cargando from './components/Cargando'
 
-// Cada pantalla va en su propio archivo y se descarga la primera vez que se abre (code splitting por rutas)
 const Landing = lazy(() => import('./pages/Landing'))
 const Login = lazy(() => import('./pages/Login'))
 const Registro = lazy(() => import('./pages/Registro'))

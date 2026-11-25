@@ -43,13 +43,6 @@ function Estrellas5({ valor, activas, onElegir }) {
     )
 }
 
-/**
- * "Tu nota" bajo la portada de un libro, coherente con el ciclo de lectura:
- * - sin leer (o en Quiero leer / Abandonado): puntuarlo lo pasa a tus leídos como "leído hace tiempo";
- * - leyendo: se puntúa al terminar;
- * - leído sin reseña: tu nota, con la opción de escribir la reseña (que parte de esa nota);
- * - con reseña: la nota es la de la reseña y cambiarla aquí la actualiza.
- */
 export default function PuntuarLibro({ idlibro, estado, lecturaAntigua, miResena, onCambio }) {
     const { avisar } = useAvisos()
     const [valoracion, setValoracion] = useState(null)

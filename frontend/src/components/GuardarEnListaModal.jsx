@@ -4,15 +4,11 @@ import api from '../api/axios'
 import { X, Plus } from '@phosphor-icons/react'
 import { useAvisos } from '../context/AvisosContext'
 
-/**
- * Ventana "Guardar en lista" de la ficha de un libro: tus listas con una casilla cada una
- * (marcada si el libro ya está), que añade o quita al momento, y crear una lista nueva ahí mismo.
- */
 export default function GuardarEnListaModal({ idlibro, onClose }) {
     const { avisarCarga } = useAvisos()
     const { usuario } = useAuth()
     const [listas, setListas] = useState(null)
-    const [pendientes, setPendientes] = useState(new Set()) // listas con una petición en curso
+    const [pendientes, setPendientes] = useState(new Set())
     const [creando, setCreando] = useState(false)
     const [nombreNueva, setNombreNueva] = useState('')
     const [error, setError] = useState('')
@@ -26,7 +22,6 @@ export default function GuardarEnListaModal({ idlibro, onClose }) {
 
     useEffect(() => { cargar() }, [cargar])
 
-    // Cerrar con Escape
     useEffect(() => {
         const alPulsar = (e) => { if (e.key === 'Escape') onClose() }
         window.addEventListener('keydown', alPulsar)
@@ -38,7 +33,6 @@ export default function GuardarEnListaModal({ idlibro, onClose }) {
         setError('')
         setPendientes(prev => new Set(prev).add(lista.idlista))
         const estaba = lista.contieneLibro
-        // Se marca al momento; si falla, se deshace
         setListas(prev => prev.map(l => l.idlista === lista.idlista
             ? { ...l, contieneLibro: !estaba, numLibros: l.numLibros + (estaba ? -1 : 1) } : l))
         try {

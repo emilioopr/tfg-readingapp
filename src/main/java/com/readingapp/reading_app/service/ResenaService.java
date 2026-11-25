@@ -70,9 +70,7 @@ public class ResenaService {
                 .libro(libro)
                 .build();
 
-        // Los seguidores ya la ven en su feed de actividad: no se les notifica
         resena = resenaRepository.save(resena);
-        // Si lo había puntuado sin reseña, la nota pasa a la reseña (no se cuenta dos veces)
         valoracionRepository.borrar(usuario.getIdusuario(), libro.getIdlibro());
 
         return toResponse(resena);
@@ -117,7 +115,6 @@ public class ResenaService {
         return toResponse(resena);
     }
 
-
     @Transactional
     public void eliminar(Long id) {
         Resena resena = buscarPorId(id);
@@ -152,10 +149,6 @@ public class ResenaService {
         usuarioRepository.save(usuario);
     }
 
-    /**
-     * Si borras tu única reseña de un libro, su nota se queda como puntuación sin reseña:
-     * borrar el texto no significa que ya no quieras puntuarlo. (Si la borra un admin, no.)
-     */
     private void conservarNotaSinResena(Resena resena) {
         Long idusuario = resena.getUsuario().getIdusuario();
         Long idlibro = resena.getLibro().getIdlibro();
@@ -168,7 +161,6 @@ public class ResenaService {
                 .puntuacion(resena.getPuntuacion()).fecha(LocalDateTime.now()).build());
     }
 
-    /** La nota va de 0,5 en 0,5 (medias estrellas); el rango 0,5-5 lo valida el DTO. */
     private void validarPuntuacion(java.math.BigDecimal puntuacion) {
         if (puntuacion != null && puntuacion.doubleValue() % 0.5 != 0) {
             throw new IllegalArgumentException("La puntuación debe ser en intervalos de 0.5");

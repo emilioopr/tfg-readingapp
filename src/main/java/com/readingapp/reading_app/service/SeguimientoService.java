@@ -38,7 +38,6 @@ public class SeguimientoService {
                 .findTopByUsuarioIdusuarioAndLibroIdlibroOrderByIdseguimientoDesc(
                         usuario.getIdusuario(), libro.getIdlibro());
 
-        // === PENDIENTE ===
         if (request.getEstado() == EstadoLectura.PENDIENTE) {
             if (ultimo.isPresent() && (ultimo.get().getEstado() == EstadoLectura.LEYENDO
                     || ultimo.get().getEstado() == EstadoLectura.PENDIENTE)) {
@@ -47,7 +46,6 @@ public class SeguimientoService {
             request.setNumPagina(0);
         }
 
-        // === LEYENDO ===
         if (request.getEstado() == EstadoLectura.LEYENDO) {
             if (ultimo.isPresent() && ultimo.get().getEstado() == EstadoLectura.LEYENDO
                     && (request.getNumPagina() == null || request.getNumPagina() == 0)) {
@@ -70,7 +68,6 @@ public class SeguimientoService {
             }
         }
 
-        // === LEIDO / ABANDONADO ===
         if (request.getEstado() == EstadoLectura.LEIDO || request.getEstado() == EstadoLectura.ABANDONADO) {
             if (ultimo.isEmpty() || ultimo.get().getEstado() != EstadoLectura.LEYENDO) {
                 throw new IllegalArgumentException(
@@ -128,10 +125,6 @@ public class SeguimientoService {
                 .toList();
     }
 
-    /**
-     * Estanterías. "Leídos" incluye cada lectura (las relecturas cuentan); el resto muestra el estado
-     * actual de cada libro, para que un libro empezado desaparezca de "Quiero leer" o uno retomado de "Abandonados".
-     */
     public List<SeguimientoDTO.Response> obtenerPorEstado(Long idusuario, EstadoLectura estado) {
         List<Seguimiento> seguimientos = estado == EstadoLectura.LEIDO
                 ? seguimientoRepository.findByUsuarioIdusuarioAndEstado(idusuario, estado)
@@ -155,8 +148,6 @@ public class SeguimientoService {
         SecurityUtils.validarUsuarioOAdmin(seguimiento.getUsuario().getIdusuario());
         seguimientoRepository.delete(seguimiento);
     }
-
-    // === HELPERS ===
 
     private SeguimientoDTO.Response toResponse(Seguimiento seguimiento) {
         Integer totalPaginas = seguimiento.getLibro().getNumPaginas();

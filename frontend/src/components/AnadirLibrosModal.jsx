@@ -4,7 +4,6 @@ import { X, Check } from '@phosphor-icons/react'
 import Portada from './Portada'
 import { useAvisos } from '../context/AvisosContext'
 
-/** Buscador para añadir libros a una lista sin salir de ella. */
 export default function AnadirLibrosModal({ idlista, idsEnLista, onCambio, onClose }) {
     const { avisarCarga } = useAvisos()
     const [query, setQuery] = useState('')
@@ -14,7 +13,6 @@ export default function AnadirLibrosModal({ idlista, idsEnLista, onCambio, onClo
     const [error, setError] = useState('')
     const ultimaBusqueda = useRef(0)
 
-    // Búsqueda mientras escribes, esperando a que pares un momento
     useEffect(() => {
         const texto = query.trim()
         if (texto.length < 2) { setResultados([]); return }

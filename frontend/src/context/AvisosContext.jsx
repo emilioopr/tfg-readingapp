@@ -2,15 +2,6 @@ import { createContext, useContext, useState, useCallback, useRef } from 'react'
 import { X } from '@phosphor-icons/react'
 import Dialogo from '../components/Dialogo'
 
-/**
- * Avisos y confirmaciones propios de la app, en lugar de alert() y confirm() del navegador.
- *
- * avisar(texto, tipo?)  → tira breve abajo a la derecha; tipo 'error' (por defecto) o 'info'.
- *                         Si ya hay un aviso igual a la vista, no se repite.
- * avisarCarga(err, texto) → para cuando falla la carga de datos de una pantalla: avisa salvo en un 403 o 404
- *                         (eso ya lo dice la propia pantalla: "no existe o no se ha podido cargar")
- * confirmar({ titulo, texto, aceptar, peligro }) → abre un Dialogo y resuelve true/false
- */
 const AvisosContext = createContext(null)
 
 const DURACION = 5000

@@ -18,8 +18,6 @@ import java.util.Set;
 @Builder
 public class Usuario {
 
-    // ATRIBUTOS
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idusuario;
@@ -30,7 +28,6 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    //Columna de tipo text en vez del varchar habitual
     @Column(columnDefinition = "TEXT")
     private String biografia;
 
@@ -40,7 +37,6 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String password;
 
-    //Cambio de nombre ya que postgre usa snake case por convención
     @Column(name = "fecha_alta", nullable = false)
     private LocalDate fechaAlta = LocalDate.now();
 
@@ -58,7 +54,6 @@ public class Usuario {
     @Column(name = "fecha_ultimo_protector")
     private LocalDate fechaUltimoProtector;
 
-    // Cuándo arrancó el temporizador (lo marca el servidor): una sesión no puede durar más que el tiempo real transcurrido
     @Column(name = "inicio_sesion_lectura")
     private LocalDateTime inicioSesionLectura;
 
@@ -68,7 +63,6 @@ public class Usuario {
     @Builder.Default
     private Set<LocalDate> diasProtegidos = new HashSet<>();
 
-    // RELACIONES
     @ManyToMany
     @JoinTable(
             name = "sigue",
@@ -108,7 +102,6 @@ public class Usuario {
     )
     private Set<Resena> resenasLikeadas = new HashSet<>();
 
-    // Citas (anotaciones de tipo CITA) que el usuario ha guardado desde el muro de citas
     @ManyToMany
     @JoinTable(
             name = "cita_guardada",

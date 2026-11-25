@@ -55,7 +55,6 @@ export default function Resenas() {
         <div className="max-w-3xl mx-auto">
             <h1 className="font-serif text-4xl leading-none text-texto mb-8">Reseñas</h1>
 
-            {/* Nuevas reseñas de amigos */}
             {usuario && (
                 <section className="border-t border-linea pt-8 mb-12">
                     <h2 className="etiqueta mb-2">Nuevas reseñas de amigos</h2>
@@ -73,7 +72,6 @@ export default function Resenas() {
                 </section>
             )}
 
-            {/* Reseñas populares */}
             <section className="border-t border-linea pt-8 mb-12">
                 <h2 className="etiqueta mb-2">Reseñas populares</h2>
                 {resenasPopulares.length === 0 ? (

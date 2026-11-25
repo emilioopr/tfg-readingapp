@@ -72,9 +72,6 @@ public class NotificacionService {
         notificacionRepository.delete(notificacion);
     }
 
-    // === MÉTODOS PARA CREAR NOTIFICACIONES DESDE OTROS SERVICIOS ===
-
-    /** Avisa al autor de una reseña de que a alguien le ha gustado; una sola vez por persona, aunque quite y vuelva a dar like. */
     @Transactional
     public void crearNotificacionLike(Resena resena, Usuario usuarioOrigen) {
         if (notificacionRepository.existsByTipoAndResenaIdresenaAndUsuarioOrigenIdusuario(
@@ -93,7 +90,6 @@ public class NotificacionService {
         notificacionRepository.save(notificacion);
     }
 
-    /** Avisa al autor de una cita de que a alguien le ha gustado; una sola vez por persona, aunque quite y vuelva a dar like. */
     @Transactional
     public void crearNotificacionLikeCita(Anotacion cita, Usuario usuarioOrigen) {
         if (notificacionRepository.existsByTipoAndAnotacionIdanotacionAndUsuarioOrigenIdusuario(
@@ -113,7 +109,6 @@ public class NotificacionService {
         notificacionRepository.save(notificacion);
     }
 
-    /** Avisa al autor de una lista de que a alguien le ha gustado; una sola vez por persona, aunque quite y vuelva a dar like. */
     @Transactional
     public void crearNotificacionLikeLista(Lista lista, Usuario usuarioOrigen) {
         if (notificacionRepository.existsByTipoAndListaIdlistaAndUsuarioOrigenIdusuario(
@@ -160,10 +155,6 @@ public class NotificacionService {
         notificacionRepository.save(notificacion);
     }
 
-    /**
-     * Avisa a un participante de que ha completado un reto (en los colaborativos, entre todos).
-     * Sus seguidores no se notifican: lo ven en su feed de actividad.
-     */
     @Transactional
     public void crearNotificacionRetoCumplido(Reto reto, Usuario participante) {
         String mensaje = reto.getModalidad() == ModalidadReto.COLABORATIVO
@@ -194,8 +185,6 @@ public class NotificacionService {
                 .build();
         notificacionRepository.save(notificacion);
     }
-
-    // === HELPERS ===
 
     private NotificacionDTO.Response toResponse(Notificacion notificacion) {
         return NotificacionDTO.Response.builder()

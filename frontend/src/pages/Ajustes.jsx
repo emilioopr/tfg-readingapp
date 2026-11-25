@@ -17,7 +17,6 @@ function Seccion({ titulo, descripcion, peligro = false, children }) {
     )
 }
 
-/** Ajustes de la cuenta: datos, contraseña, sesión y baja. */
 export default function Ajustes() {
     const { usuario, logout } = useAuth()
     const [fechaAlta, setFechaAlta] = useState(null)
@@ -116,7 +115,6 @@ function CambiarPassword() {
     )
 }
 
-/** Baja de la cuenta: pide la contraseña y borra todos los datos del usuario. */
 function EliminarCuenta() {
     const { logout } = useAuth()
     const [abierto, setAbierto] = useState(false)
@@ -130,7 +128,7 @@ function EliminarCuenta() {
         setBorrando(true)
         try {
             await api.post(`/usuarios/yo/eliminar-cuenta`, { password })
-            logout() // limpia la sesión y vuelve a la portada
+            logout()
         } catch (err) {
             setError(err.response?.data?.mensaje || 'No se ha podido eliminar la cuenta')
             setBorrando(false)

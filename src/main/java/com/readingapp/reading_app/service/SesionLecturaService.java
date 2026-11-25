@@ -23,7 +23,6 @@ public class SesionLecturaService {
     private final RetoService retoService;
     private final Clock clock;
 
-    /** Marca el inicio del temporizador. Si había otro sin terminar, se descarta. */
     @Transactional
     public void iniciar(Long idusuario) {
         Usuario usuario = usuarioRepository.findById(idusuario)
@@ -44,7 +43,6 @@ public class SesionLecturaService {
         if (usuario.getInicioSesionLectura() == null) {
             throw new IllegalArgumentException("No hay ninguna sesión de lectura en marcha");
         }
-        // Con pausas el cliente cuenta menos que el tiempo real, pero nunca más (+1 por el redondeo de minutos)
         long transcurridos = Duration.between(usuario.getInicioSesionLectura(), ahora).toMinutes() + 1;
         minutos = (int) Math.min(minutos, transcurridos);
         usuario.setInicioSesionLectura(null);
@@ -58,7 +56,6 @@ public class SesionLecturaService {
 
         sesion = sesionLecturaRepository.save(sesion);
 
-        // Recalcular retos de HORAS activos
         retoService.recalcularRetosActivosDeUsuario(idusuario);
 
         return toResponse(sesion);

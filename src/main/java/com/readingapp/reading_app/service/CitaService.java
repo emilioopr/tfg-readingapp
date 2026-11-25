@@ -23,12 +23,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/** Muro de citas de la comunidad (con likes) y citas que cada usuario guarda y muestra en su perfil. */
 @Service
 @RequiredArgsConstructor
 public class CitaService {
 
-    /** Ventana de tiempo en la que cuentan los likes para el orden "populares". */
     static final int DIAS_POPULARES = 7;
 
     private final AnotacionRepository anotacionRepository;
@@ -36,7 +34,6 @@ public class CitaService {
     private final UsuarioRepository usuarioRepository;
     private final NotificacionService notificacionService;
 
-    /** Citas públicas de la comunidad: "populares" (más likes de la semana) o "recientes". */
     @Transactional(readOnly = true)
     public CitaDTO.Pagina obtenerComunidad(String orden, int pagina, int tamanio) {
         PageRequest pageable = PageRequest.of(pagina, tamanio);
@@ -46,21 +43,18 @@ public class CitaService {
         }
         Page<Long> ids = anotacionRepository.findIdsCitasPopulares(
                 LocalDateTime.now().minusDays(DIAS_POPULARES), pageable);
-        // findAllById no respeta el orden: se recoloca según la lista de ids
         Map<Long, Anotacion> porId = anotacionRepository.findAllById(ids.getContent()).stream()
                 .collect(Collectors.toMap(Anotacion::getIdanotacion, Function.identity()));
         List<Anotacion> ordenadas = ids.getContent().stream().map(porId::get).filter(Objects::nonNull).toList();
         return aPagina(new PageImpl<>(ordenadas, pageable, ids.getTotalElements()));
     }
 
-    /** Citas guardadas de un usuario, para la pestaña "Mural de citas" de su perfil. */
     @Transactional(readOnly = true)
     public CitaDTO.Pagina obtenerGuardadas(Long idusuario, int pagina, int tamanio) {
         return aPagina(anotacionRepository.findCitasGuardadas(
                 idusuario, SecurityUtils.getUsuarioAutenticadoId(), PageRequest.of(pagina, tamanio)));
     }
 
-    /** Guarda una cita pública (o propia) en la colección del usuario. */
     @Transactional
     public void guardar(Long idanotacion) {
         Usuario usuario = usuarioActual();
@@ -79,7 +73,6 @@ public class CitaService {
         }
     }
 
-    /** Da like a una cita pública (o propia). Dar like dos veces no hace nada; el autor no se avisa a sí mismo. */
     @Transactional
     public void darLike(Long idanotacion) {
         Usuario usuario = usuarioActual();
@@ -97,14 +90,11 @@ public class CitaService {
         likeCitaRepository.quitar(SecurityUtils.getUsuarioAutenticadoId(), idanotacion);
     }
 
-    // === HELPERS ===
-
     private Usuario usuarioActual() {
         return usuarioRepository.findById(SecurityUtils.getUsuarioAutenticadoId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 
-    /** La cita existe, es una cita y el usuario puede verla (es pública o suya). */
     private Anotacion citaVisible(Long idanotacion, Long idusuario) {
         Anotacion cita = anotacionRepository.findById(idanotacion)
                 .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada"));
@@ -139,7 +129,6 @@ public class CitaService {
                 .build();
     }
 
-    /** Filas [idanotacion, cantidad] a un mapa id → cantidad. */
     private Map<Long, Long> aMapa(List<Object[]> filas) {
         return filas.stream().collect(Collectors.toMap(f -> (Long) f[0], f -> ((Number) f[1]).longValue()));
     }

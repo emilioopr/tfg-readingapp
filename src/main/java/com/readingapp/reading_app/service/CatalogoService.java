@@ -19,10 +19,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * Catálogo tipo Netflix: un libro destacado, filas temáticas y filas por categoría.
- * Las filas son una muestra aleatoria que se mantiene todo el día (por usuario) y se renueva al día siguiente.
- */
 @Service
 @RequiredArgsConstructor
 public class CatalogoService {
@@ -32,14 +28,13 @@ public class CatalogoService {
     public static final int MIN_LIBROS_FILA = 4;
     private static final int ANIO_CLASICOS = 1950;
     private static final int LONGITUD_MIN_SINOPSIS = 120;
-    private static final double NOTA_MIN_VALORADOS = 3.5; // sobre 5
+    private static final double NOTA_MIN_VALORADOS = 3.5;
 
     private final LibroRepository libroRepository;
     private final NotasLibros notasLibros;
     private final SeguimientoRepository seguimientoRepository;
     private final Clock clock;
 
-    /** Nota media (sobre 5) y nº de valoraciones (reseñas públicas + puntuaciones sin reseña) de un libro. */
     private record Nota(double media, int total) {}
 
     @Transactional(readOnly = true)
@@ -53,7 +48,6 @@ public class CatalogoService {
         Long idusuario = SecurityUtils.usuarioActualId();
         LocalDate hoy = LocalDate.now(clock);
 
-        // Filas especiales
         añadir(filas, "populares", "Populares este mes", null,
                 libroRepository.findPopulares(hoy.minusDays(30).atStartOfDay(),
                         PageRequest.of(0, LIBROS_POR_FILA)).stream().map(resumen).toList());
@@ -73,7 +67,6 @@ public class CatalogoService {
                         .thenComparing(l -> -notas.get(l.getIdlibro()).total()))
                 .limit(LIBROS_POR_FILA).map(resumen).toList());
 
-        // Filas por categoría (el orden cambia cada día), intercalando clásicos y novedades
         List<Categoria> categorias = categoriasVisibles(porCategoria);
         List<Categoria> ordenDelDia = new ArrayList<>(categorias);
         Collections.shuffle(ordenDelDia, azar(hoy, idusuario, "orden"));
@@ -97,7 +90,6 @@ public class CatalogoService {
                 .build();
     }
 
-    /** Todos los libros de una categoría, paginados: primero los que tienen portada y mejor nota. */
     @Transactional(readOnly = true)
     public CatalogoDTO.PaginaCategoria obtenerPorCategoria(String slug, int pagina, int tamanio) {
         Categoria categoria = Categoria.porSlug(slug)
@@ -123,9 +115,6 @@ public class CatalogoService {
                 .build();
     }
 
-    // === HELPERS ===
-
-    /** Algunos libros están importados dos veces (mismo título y autor): se queda el de menor id. */
     private List<Libro> librosSinDuplicados() {
         Map<String, Libro> unicos = new LinkedHashMap<>();
         libroRepository.findAllConAutor().stream()
@@ -148,7 +137,6 @@ public class CatalogoService {
         return mapa;
     }
 
-    /** Categorías con libros suficientes, de más a menos libros. */
     private List<Categoria> categoriasVisibles(Map<Categoria, List<Libro>> porCategoria) {
         return porCategoria.entrySet().stream()
                 .filter(e -> e.getValue().size() >= MIN_LIBROS_CATEGORIA)
@@ -157,7 +145,6 @@ public class CatalogoService {
                 .toList();
     }
 
-    /** La categoría más leída por el usuario, con los libros que aún no tiene en su estantería. */
     private Optional<Map.Entry<Categoria, List<Libro>>> filaPersonalizada(Long idusuario, Map<Categoria, List<Libro>> porCategoria) {
         Set<Long> suyos = seguimientoRepository.findByUsuarioIdusuario(idusuario).stream()
                 .map(s -> s.getLibro().getIdlibro()).collect(Collectors.toSet());
@@ -169,10 +156,6 @@ public class CatalogoService {
                 .map(e -> Map.entry(e.getKey(), filtrar(e.getValue(), l -> !suyos.contains(l.getIdlibro()))));
     }
 
-    /**
-     * Libro del día: uno con portada y sinopsis larga, el mismo para todos durante todo el día.
-     * No depende de las notas para que una reseña nueva no lo cambie a media jornada.
-     */
     private Optional<Libro> elegirDestacado(List<Libro> libros, LocalDate hoy) {
         List<Libro> candidatos = filtrar(libros, l -> l.getPortada() != null && l.getSinopsis() != null
                 && l.getSinopsis().length() >= LONGITUD_MIN_SINOPSIS);
@@ -180,10 +163,6 @@ public class CatalogoService {
                 : Optional.of(candidatos.get(azar(hoy, null, "destacado").nextInt(candidatos.size())));
     }
 
-    /**
-     * Generador aleatorio que da siempre lo mismo para el mismo día, usuario y fila: el catálogo se mantiene
-     * igual durante el día (aunque se entre y salga de "Ver todo") y se renueva al día siguiente.
-     */
     static Random azar(LocalDate dia, Long idusuario, String clave) {
         long semilla = dia.toEpochDay();
         semilla = semilla * 31 + (idusuario != null ? idusuario : 0);
@@ -191,11 +170,10 @@ public class CatalogoService {
         return new Random(semilla);
     }
 
-    /** Muestra aleatoria de hasta LIBROS_POR_FILA libros, con los que tienen portada primero. */
     private List<Libro> muestra(List<Libro> libros, Random random) {
         List<Libro> copia = new ArrayList<>(libros);
         Collections.shuffle(copia, random);
-        copia.sort(Comparator.comparing(l -> l.getPortada() == null)); // sort estable: mantiene el orden aleatorio
+        copia.sort(Comparator.comparing(l -> l.getPortada() == null));
         return copia.subList(0, Math.min(LIBROS_POR_FILA, copia.size()));
     }
 

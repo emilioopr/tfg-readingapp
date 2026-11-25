@@ -19,7 +19,6 @@ class IntentosLoginServiceTest {
 
     private static final String EMAIL = "ana@test.com";
 
-    /** Reloj que se puede adelantar a mano. */
     private static class RelojManual extends Clock {
         private Instant ahora = Instant.parse("2026-09-29T10:00:00Z");
         void avanzar(Duration d) { ahora = ahora.plus(d); }

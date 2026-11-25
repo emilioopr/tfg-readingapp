@@ -5,7 +5,6 @@ import lombok.*;
 
 public class SesionLecturaDTO {
 
-    /** Límite por sesión: evita registrar sesiones imposibles que completen retos de horas al instante. */
     public static final int MAX_MINUTOS_SESION = 12 * 60;
 
     @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

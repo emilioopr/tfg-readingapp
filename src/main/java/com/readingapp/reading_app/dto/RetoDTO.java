@@ -39,7 +39,7 @@ public class RetoDTO {
         private Long idCreador;
         private String nombreCreador;
         private Integer numParticipantes;
-        private Integer progresoColaborativo; // solo COLABORATIVO: suma total
+        private Integer progresoColaborativo;
         private Double porcentajeColaborativo;
         private List<ParticipanteResponse> participantes;
     }

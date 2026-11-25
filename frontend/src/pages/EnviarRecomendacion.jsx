@@ -18,7 +18,6 @@ export default function EnviarRecomendacion() {
     const [error, setError] = useState('')
 
     const cargarLibro = useCallback(async () => { try { const res = await api.get(`/libros/${idlibro}`); setLibro(res.data) } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar el libro.') } }, [avisarCarga, idlibro])
-    // Solo se puede recomendar a mutuals: personas a las que sigues y que te siguen
     const cargarSeguidos = useCallback(async () => {
         try {
             const [seguidosRes, seguidoresRes] = await Promise.all([

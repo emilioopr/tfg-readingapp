@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-/** Like de un usuario a una lista. Guarda la fecha por si se quieren ordenar las listas por populares. */
 @Entity
 @Table(name = "like_lista",
         uniqueConstraints = @UniqueConstraint(columnNames = {"idusuario", "idlista"}),

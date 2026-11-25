@@ -29,10 +29,9 @@ export default function Inicio() {
     const [errorProgreso, setErrorProgreso] = useState('')
     const [mostrarFinalizarModal, setMostrarFinalizarModal] = useState(false)
     const [mostrarAbandonarModal, setMostrarAbandonarModal] = useState(false)
-    const [libroAAnotar, setLibroAAnotar] = useState(null) // id del libro, fijado al abrir el diálogo: la lista se reordena tras actualizar
+    const [libroAAnotar, setLibroAAnotar] = useState(null)
     const [librosPopulares, setLibrosPopulares] = useState([])
     const { racha, refrescarRacha } = useRacha()
-    // Tras registrar lectura se piden las notificaciones al momento: si se cumple un reto, sale su aviso
     const { refrescar: refrescarNotificaciones } = useNotificaciones()
 
     useEffect(() => {
@@ -109,7 +108,7 @@ export default function Inicio() {
                 navigate(`/libro/${libroActual.idlibro}/resena`)
             } else {
                 await cargarLeyendo()
-                setLeyendoIndex(0) // el libro recién actualizado pasa a ser el primero de la lista
+                setLeyendoIndex(0)
                 cargarRetos()
                 refrescarNotificaciones()
                 setLibroAAnotar(libroActual.idlibro)
@@ -126,7 +125,7 @@ export default function Inicio() {
                 estado: 'LEIDO',
                 idlibro: libroActual.idlibro,
             })
-            refrescarRacha() // terminar un libro también cuenta como día de lectura
+            refrescarRacha()
             refrescarNotificaciones()
             navigate(`/libro/${libroActual.idlibro}/resena`)
         } catch (err) {
@@ -163,13 +162,11 @@ export default function Inicio() {
 
     return (
         <div>
-            {/* Cabecera: el libro en curso, protagonista, sobre su portada difuminada */}
             <section className="relative isolate -mx-4 sm:-mx-6 px-4 sm:px-6 pt-2 pb-12 mb-4">
 
                 <p className="relative text-sm text-texto-sec mb-8">Hola, {usuario.nombre}.</p>
 
                 <div className="relative grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem]">
-                    {/* Leyendo ahora */}
                     <div className="min-w-0">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="etiqueta">Leyendo ahora</h2>
@@ -249,7 +246,6 @@ export default function Inicio() {
                         )}
                     </div>
 
-                    {/* Margen derecho: racha y retos */}
                     <aside className="lg:border-l lg:border-linea lg:pl-8 space-y-10">
                         {racha && (
                             <div>
@@ -306,13 +302,10 @@ export default function Inicio() {
                 </div>
             </section>
 
-            {/* Filas de libros, separadas por filetes */}
             {librosPopulares.length > 0 && <FilaLibros titulo="Libros populares" libros={librosPopulares} verTodo="/catalogo" />}
 
-            {/* Sin "ver todo": el catálogo no tiene una vista de lo que leen tus amigos */}
             {popularesAmigos.length > 0 && <FilaLibros titulo="Popular entre tus amigos" libros={popularesAmigos} />}
 
-            {/* Actividad de las personas que sigues */}
             <ActividadSeguidos />
 
             {mostrarFinalizarModal && (

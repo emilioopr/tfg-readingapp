@@ -73,8 +73,6 @@ class ResenaServiceTest {
         SecurityContextHolder.clearContext();
     }
 
-    // ===== Helpers =====
-
     private static Usuario usuario(Long id, String nombre) {
         return Usuario.builder().idusuario(id).nombre(nombre)
                 .seguidos(new HashSet<>()).seguidoresList(new HashSet<>()).resenasLikeadas(new HashSet<>())
@@ -87,7 +85,6 @@ class ResenaServiceTest {
                 .thenReturn(Optional.of(s));
     }
 
-    /** El usuario ha terminado el libro 'lecturas' veces y ya tiene 'resenas' reseñas de él. */
     private void leidoVeces(int lecturas, int resenas) {
         ultimoEstado(EstadoLectura.LEIDO);
         when(seguimientoRepository.countByUsuarioIdusuarioAndLibroIdlibroAndEstado(ID_USUARIO, ID_LIBRO, EstadoLectura.LEIDO))
@@ -106,8 +103,6 @@ class ResenaServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 "u@test.com", idusuario, List.of(new SimpleGrantedAuthority("ROLE_USER"))));
     }
-
-    // ===== Crear =====
 
     @Nested
     @DisplayName("Escribir una reseña")
@@ -197,8 +192,6 @@ class ResenaServiceTest {
         }
     }
 
-    // ===== Editar =====
-
     @Nested
     @DisplayName("Editar una reseña")
     class Actualizar {
@@ -246,8 +239,6 @@ class ResenaServiceTest {
         }
     }
 
-    // ===== Eliminar =====
-
     @Nested
     @DisplayName("Eliminar una reseña")
     class Eliminar {
@@ -285,8 +276,6 @@ class ResenaServiceTest {
             verify(valoracionRepository, never()).save(any());
         }
     }
-
-    // ===== Likes =====
 
     @Nested
     @DisplayName("Likes")

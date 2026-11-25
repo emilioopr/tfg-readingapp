@@ -4,7 +4,6 @@ import { CaretLeft, CaretRight } from '@phosphor-icons/react'
 import Portada from './Portada'
 import { formatoMedia } from '../utils/notas'
 
-/** Libro del catálogo: portada, título, autor y la nota media si la tiene. */
 export function PortadaLibro({ libro, className = 'w-36' }) {
     return (
         <Link to={`/libro/${libro.idlibro}`} className={`group flex-shrink-0 snap-start ${className}`}>
@@ -22,7 +21,6 @@ export function PortadaLibro({ libro, className = 'w-36' }) {
 
 const claseFlecha = 'w-8 h-8 rounded-full border border-linea flex items-center justify-center text-texto-sec hover:text-texto hover:border-texto-ter disabled:opacity-30 disabled:pointer-events-none'
 
-/** Fila horizontal de libros; se avanza de "página" en "página" con las flechas de la cabecera. */
 export default function FilaLibros({ titulo, libros, verTodo }) {
     const scrollRef = useRef(null)
     const [puedeIzquierda, setPuedeIzquierda] = useState(false)

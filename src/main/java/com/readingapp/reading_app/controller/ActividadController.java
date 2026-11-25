@@ -14,7 +14,6 @@ public class ActividadController {
 
     private final ActividadService actividadService;
 
-    /*Actividad reciente de las personas que sigue el usuario (solo la suya propia).*/
     @GetMapping("/seguidos")
     public ResponseEntity<ActividadDTO.Pagina> deSeguidos(@RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "20") int size) {

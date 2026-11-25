@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext'
 import { useNotificaciones } from '../context/NotificacionesContext'
 import { X } from '@phosphor-icons/react'
 
-// Texto breve de cada aviso: una etiqueta en versalitas y una frase (sin emojis)
 const formatearMensaje = (n) => {
     const quien = n.nombreUsuarioOrigen || 'Alguien'
     switch (n.tipo) {
@@ -47,7 +46,6 @@ export default function ToastNotificaciones() {
     const [toasts, setToasts] = useState([])
     const ultimaComprobacion = useRef(null)
 
-    // Cada vez que llega la lista de no leídas, se avisa de las que no se habían visto aún
     useEffect(() => {
         if (!usuario || !cargadas) {
             ultimaComprobacion.current = null
@@ -55,7 +53,6 @@ export default function ToastNotificaciones() {
         }
         const ids = noLeidas.map(n => n.idnotificacion)
         if (ultimaComprobacion.current === null) {
-            // Primera carga: lo que ya estaba sin leer no se anuncia
             ultimaComprobacion.current = ids
             return
         }
@@ -66,7 +63,6 @@ export default function ToastNotificaciones() {
 
         sinVer.forEach(n => {
             setToasts(prev => [...prev, { id: n.idnotificacion, tipo: n.tipo, mensaje: formatearMensaje(n), destino: getDestino(n) }])
-            // Auto-eliminar después de 5 segundos
             setTimeout(() => setToasts(prev => prev.filter(t => t.id !== n.idnotificacion)), 5000)
         })
     }, [noLeidas, cargadas, usuario])

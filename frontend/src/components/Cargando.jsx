@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react'
 
-/**
- * Aviso de carga de una pantalla. Aparece solo si tarda más de un momento,
- * para que en una conexión rápida no haya parpadeo.
- * pantalla: ocupa toda la ventana (rutas fuera del layout, como la landing)
- */
 export default function Cargando({ pantalla = false }) {
     const [visible, setVisible] = useState(false)
     useEffect(() => {

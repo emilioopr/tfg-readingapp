@@ -17,32 +17,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Feed de actividad de las personas que sigue un usuario: qué empiezan a leer, qué terminan,
- * qué quieren leer, sus reseñas públicas y los retos que consiguen, de lo más reciente a lo más antiguo.
- *
- * Mezcla tres fuentes, así que para la página N se piden a cada una los (N+1)·tamaño primeros eventos,
- * se ordenan juntos y se recorta la página: el resultado es exacto aunque una fuente domine.
- */
 @Service
 @RequiredArgsConstructor
 public class ActividadService {
 
-    // Sin límite de fechas: la paginación decide cuánto se ve
     private static final LocalDate DESDE_SIEMPRE = LocalDate.of(1970, 1, 1);
 
     private final SeguimientoRepository seguimientoRepository;
     private final ResenaRepository resenaRepository;
     private final ParticipanteRetoRepository participanteRetoRepository;
 
-    /** Evento con su instante para poder ordenar fuentes distintas en un único feed. */
     private record Evento(LocalDateTime cuando, ActividadDTO.Response datos) {}
 
     @Transactional(readOnly = true)
     public ActividadDTO.Pagina obtenerDeSeguidos(Long idusuario, int pagina, int tamanio) {
         LocalDate desde = DESDE_SIEMPRE;
         int hasta = (pagina + 1) * tamanio;
-        PageRequest primeros = PageRequest.of(0, hasta + 1); // +1 para saber si hay más
+        PageRequest primeros = PageRequest.of(0, hasta + 1);
         List<Evento> eventos = new ArrayList<>();
 
         for (Seguimiento s : seguimientoRepository.findActividadDeSeguidos(idusuario, desde, primeros)) {
@@ -51,8 +42,6 @@ public class ActividadService {
                 case PENDIENTE -> Tipo.QUIERE_LEER;
                 default -> Tipo.EMPEZO;
             };
-            // Los seguimientos solo guardan el día: se sitúan al principio, así una reseña de ese mismo día
-            // (que se escribe después de terminar el libro) aparece por encima
             eventos.add(new Evento(s.getFecha().atStartOfDay(), conLibro(tipo, s.getUsuario(), s.getLibro())
                     .fecha(s.getFecha().toString()).build()));
         }

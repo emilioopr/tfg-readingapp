@@ -31,7 +31,6 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     List<Libro> findByGeneroIgnoreCase(String genero, Pageable pageable);
     List<Libro> findByAutorIdautor(Long idautor, Pageable pageable);
 
-    /** Todos los libros con su autor en una sola consulta (para montar el catálogo). */
     @Query("SELECT l FROM Libro l JOIN FETCH l.autor")
     List<Libro> findAllConAutor();
     boolean existsByIdapiexterna(String idapiexterna);
@@ -42,7 +41,6 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     @Query("SELECT l FROM Libro l WHERE l.genero = :genero ORDER BY l.idlibro DESC")
     List<Libro> findByGenero(@Param("genero") String genero, Pageable pageable);
 
-    // JOIN explícito: con "r.libro.idlibro" en el ORDER BY, Hibernate ordena por la FK de resena y PostgreSQL lo rechaza
     @Query("SELECT l FROM Resena r JOIN r.libro l WHERE r.esPublica = true AND r.fechaCreacion > :desde " +
             "GROUP BY l ORDER BY COUNT(r) DESC, l.idlibro")
     List<Libro> findPopulares(@Param("desde") LocalDateTime desde, Pageable pageable);

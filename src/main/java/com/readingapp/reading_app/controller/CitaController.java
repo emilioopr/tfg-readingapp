@@ -13,7 +13,6 @@ public class CitaController {
 
     private final CitaService citaService;
 
-    /*Citas públicas de la comunidad. orden = "populares" (más likes de la semana) o "recientes".*/
     @GetMapping
     public ResponseEntity<CitaDTO.Pagina> comunidad(@RequestParam(defaultValue = "populares") String orden,
                                                     @RequestParam(defaultValue = "0") int page,
@@ -21,7 +20,6 @@ public class CitaController {
         return ResponseEntity.ok(citaService.obtenerComunidad(orden, Math.max(page, 0), Math.min(Math.max(size, 1), 50)));
     }
 
-    /*Citas guardadas por un usuario (pestaña "Citas" de su perfil).*/
     @GetMapping("/guardadas/usuario/{idusuario}")
     public ResponseEntity<CitaDTO.Pagina> guardadas(@PathVariable Long idusuario,
                                                     @RequestParam(defaultValue = "0") int page,

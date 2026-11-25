@@ -40,8 +40,6 @@ export default function Calendario() {
 
     const getLibrosDelDia = (dia) => {
         const fecha = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
-        // Solo días de lectura de verdad: avanzar páginas o terminar un libro (como la racha).
-        // Añadir a "Quiero leer", empezar en la página 0 o marcarlo como leído hace tiempo no es leer ese día.
         const segsDelDia = seguimientos.filter(s => s.fecha === fecha && (
             (s.estado === 'LEYENDO' && s.numPagina > 0) || (s.estado === 'LEIDO' && !s.lecturaAntigua)))
         const vistos = new Set()
@@ -59,7 +57,6 @@ export default function Calendario() {
 
     return (
         <div className="max-w-6xl mx-auto">
-            {/* Cabecera con selectores */}
             <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
                 <div>
                     <p className="etiqueta mb-2">Tu calendario de lectura</p>
@@ -81,16 +78,13 @@ export default function Calendario() {
                 </div>
             </div>
 
-            {/* Cabeceras días de la semana */}
             <div className="grid grid-cols-7 gap-3 mb-2">
                 {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((d) => (
                     <div key={d} className="text-center text-xs text-texto-sec font-medium py-1">{d}</div>
                 ))}
             </div>
 
-            {/* Grid de días */}
             <div className="grid grid-cols-7 gap-3">
-                {/* Espacios vacíos antes del día 1 */}
                 {Array.from({ length: getOffset() }, (_, i) => (
                     <div key={`pad-${i}`} className="aspect-square" />
                 ))}
@@ -133,19 +127,16 @@ export default function Calendario() {
                                         </div>
                                     )}
 
-                                    {/* Número del día */}
                                     <div className="absolute top-1 left-1 bg-fondo/80 text-texto text-[11px] tabular-nums px-1.5 py-0.5 rounded-[2px]">
                                         {dia}
                                     </div>
 
-                                    {/* Indicador de más libros */}
                                     {libros.length > 4 && (
                                         <div className="absolute bottom-1 right-1 bg-fondo/80 text-texto text-[11px] px-1.5 py-0.5 rounded-[2px]">
                                             +{libros.length - 4}
                                         </div>
                                     )}
 
-                                    {/* Tooltip con títulos al hover */}
                                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fondo/90 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         {libros.slice(0, 3).map((libro) => (
                                             <p key={libro.idlibro} className="text-texto text-xs truncate">{libro.tituloLibro}</p>
@@ -162,7 +153,6 @@ export default function Calendario() {
                 })}
             </div>
 
-            {/* Leyenda */}
             <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-xs text-texto-sec">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border border-linea rounded-[2px]" />

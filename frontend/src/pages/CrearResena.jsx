@@ -50,7 +50,6 @@ export default function CrearResena() {
         } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar la reseña para editarla.') }
     }, [avisarCarga, idresena])
 
-    // Si ya lo había puntuado desde la ficha (sin reseña), se parte de esa nota: al publicar pasa a la reseña
     const cargarValoracion = useCallback(async () => {
         try {
             const res = await api.get(`/valoraciones/libro/${idlibro}/mia`)
@@ -64,7 +63,6 @@ export default function CrearResena() {
     useEffect(() => { cargarLibro() }, [cargarLibro, idlibro])
     useEffect(() => { if (esEdicion) cargarResena(); else cargarValoracion() }, [cargarResena, cargarValoracion, esEdicion, idresena])
 
-    // Al terminar un libro se puede dejar solo la nota, sin escribir la reseña
     const soloPuntuar = async () => {
         setError('')
         if (puntuacion === 0) { setError('Elige una puntuación'); return }
@@ -82,7 +80,6 @@ export default function CrearResena() {
         e.preventDefault(); setError('')
         if (puntuacion === 0) { setError('La puntuación es obligatoria'); return }
         if (ritmo === 0) { setError('El ritmo es obligatorio'); return }
-        // Evita el doble clic: sin esto, dos POST seguidos podían crear la reseña dos veces
         if (enviando) return
         setEnviando(true)
         try {
@@ -104,7 +101,6 @@ export default function CrearResena() {
     const handleHoverEstrella = (estrella, esMitadIzquierda) => {
         if (!bloqueadoEstrellas) setHoverPuntuacion(esMitadIzquierda ? estrella - 0.5 : estrella)
     }
-    // Con el teclado: flechas de media en media estrella, Inicio y Fin a los extremos
     const teclaEstrellas = (e) => {
         const pasos = { ArrowRight: 0.5, ArrowUp: 0.5, ArrowLeft: -0.5, ArrowDown: -0.5 }
         let valor = null

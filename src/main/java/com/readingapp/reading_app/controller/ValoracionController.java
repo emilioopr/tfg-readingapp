@@ -14,7 +14,6 @@ public class ValoracionController {
 
     private final ValoracionService valoracionService;
 
-    /*Tu puntuación sin reseña de un libro (204 si no lo has puntuado así).*/
     @GetMapping("/libro/{idlibro}/mia")
     public ResponseEntity<ValoracionDTO.Response> mia(@PathVariable Long idlibro) {
         return valoracionService.obtenerMia(idlibro)

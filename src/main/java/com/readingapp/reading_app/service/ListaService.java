@@ -61,7 +61,6 @@ public class ListaService {
         return toDetalleResponse(lista);
     }
 
-    /*El propio usuario ve todas sus listas; los demás solo las públicas.*/
     public List<ListaDTO.Response> obtenerPorUsuario(Long usuarioId) {
         boolean esPropio = SecurityUtils.esUsuarioActual(usuarioId);
         return conLikes(listaRepository.findByUsuarioIdusuario(usuarioId).stream()
@@ -69,7 +68,6 @@ public class ListaService {
                 .toList());
     }
 
-    /** Tus listas indicando en cuáles está ya un libro, para la ventana "Guardar en lista" de su ficha. */
     @Transactional(readOnly = true)
     public List<ListaDTO.Response> obtenerMiasParaLibro(Long usuarioId, Long idlibro) {
         SecurityUtils.validarUsuario(usuarioId);
@@ -106,9 +104,6 @@ public class ListaService {
         listaRepository.deleteById(id);
     }
 
-    // === LIKES ===
-
-    /** Da like a una lista pública (o propia). Dar like dos veces no hace nada. */
     @Transactional
     public void darLike(Long idlista) {
         Lista lista = buscarPorId(idlista);
@@ -130,14 +125,11 @@ public class ListaService {
         likeListaRepository.quitar(SecurityUtils.getUsuarioAutenticadoId(), idlista);
     }
 
-    /** Listas que le gustan al usuario de la sesión (página "Likes"). */
     @Transactional(readOnly = true)
     public List<ListaDTO.Response> obtenerLikeadas(Long usuarioId) {
         SecurityUtils.validarUsuario(usuarioId);
         return conLikes(likeListaRepository.findListasLikeadas(usuarioId));
     }
-
-    // === GESTIÓN DE LIBROS EN LISTA ===
 
     @Transactional
     public void agregarLibro(Long idlista, Long idlibro) {
@@ -159,14 +151,11 @@ public class ListaService {
         listaRepository.save(lista);
     }
 
-    // === HELPERS ===
-
     private Lista buscarPorId(Long id) {
         return listaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Lista no encontrada con id: " + id));
     }
 
-    /** Respuestas de varias listas con sus likes, con dos consultas para todas. */
     private List<ListaDTO.Response> conLikes(List<Lista> listas) {
         if (listas.isEmpty()) return List.of();
         List<Long> ids = listas.stream().map(Lista::getIdlista).toList();

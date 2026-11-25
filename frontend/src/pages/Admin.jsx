@@ -28,10 +28,8 @@ export default function Admin() {
 
     const toggleGenero = (g) => { setGenerosSeleccionados(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]) }
 
-    // Google Books no tiene una lista cerrada de categorías: cualquier texto sirve como género (subject:)
     const anadirGenero = () => {
         const texto = otroGenero.trim()
-        // Si ya hay un botón con ese género (sin distinguir mayúsculas), se selecciona ese en vez de duplicarlo
         const g = [...GENEROS, ...generosSeleccionados].find(x => x.toLowerCase() === texto.toLowerCase()) ?? texto
         if (texto) setGenerosSeleccionados(prev => prev.includes(g) ? prev : [...prev, g])
         setOtroGenero('')
@@ -43,7 +41,6 @@ export default function Admin() {
         if (generosSeleccionados.length === 0) { setError('Selecciona al menos un género'); return }
         setCargando(true)
         try {
-            // La carga sigue en el servidor aunque tarde minutos: se pregunta por su estado cada 3 s
             await api.post(`/carga/masiva?cantidad=${cantidad}&idioma=${idioma}`, generosSeleccionados)
             let estado
             do {
@@ -56,7 +53,6 @@ export default function Admin() {
         finally { setCargando(false) }
     }
 
-    // Reintenta con Open Library los autores que se quedaron sin foto al importarse
     const handleEnriquecerAutores = async () => {
         setErrorAutores(''); setResultadoAutores('')
         setEnriqueciendo(true)

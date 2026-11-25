@@ -5,14 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Categorías propias del catálogo. Los libros guardan el género tal cual lo da Google Books
- * (en inglés o español y muy fragmentado: "Fiction", "Ficción", "Juvenile Fiction", "Dragons"...),
- * así que aquí se agrupan en unas pocas categorías legibles.
- *
- * El orden importa: se asigna la primera categoría cuyas palabras clave aparezcan en el género
- * (p. ej. "Juvenile Fiction" es Juvenil antes que Novela).
- */
 public enum Categoria {
 
     JUVENIL("Juvenil", "juvenil", "juvenile", "young adult", "children", "infantil"),
@@ -54,12 +46,10 @@ public enum Categoria {
         return nombre;
     }
 
-    /** Identificador para URLs, p. ej. "fantasia". */
     public String getSlug() {
         return name().toLowerCase();
     }
 
-    /** Categoría a la que pertenece un género de Google Books, si encaja en alguna. */
     public static Optional<Categoria> de(String genero) {
         if (genero == null || genero.isBlank()) return Optional.empty();
         String g = normalizar(genero);
@@ -72,7 +62,6 @@ public enum Categoria {
         return Arrays.stream(values()).filter(c -> c.getSlug().equalsIgnoreCase(slug)).findFirst();
     }
 
-    /** La clave debe empezar una palabra: "fiction" casa con "Juvenile Fiction" pero no con "Nonfiction". */
     private static boolean contienePalabra(String texto, String clave) {
         int i = texto.indexOf(clave);
         while (i >= 0) {

@@ -114,19 +114,15 @@ class GoogleBooksServiceTest {
         assertThat(resultado.get("hayMas")).isEqualTo(false);
     }
 
-    // === IMPORTACIÓN Y AVISO A LOS SEGUIDORES DEL AUTOR ===
-
     private static final Map<String, Object> FICHA = Map.of("id", "id-nuevo",
             "volumeInfo", Map.of("title", "Un libro nuevo", "authors", List.of("Miguel Delibes")));
 
-    /** Importa la ficha cuando el autor ya existe en la base de datos con los seguidores indicados. */
     private Libro importarConAutor(Usuario... seguidores) {
         Autor delibes = Autor.builder().idautor(5L).nombre("Miguel Delibes")
                 .seguidoresList(new HashSet<>(Set.of(seguidores))).build();
         Libro guardado = Libro.builder().idlibro(10L).titulo("Un libro nuevo").autor(delibes).build();
         when(restTemplate.getForObject(anyString(), eq(Map.class), any(), any())).thenReturn(FICHA);
         when(autorRepository.findByNombreNormalizado("Miguel Delibes")).thenReturn(Optional.of(delibes));
-        // antes de guardarlo no está en el catálogo; después sí
         when(libroRepository.findFirstByIdapiexterna("id-nuevo")).thenReturn(Optional.empty(), Optional.of(guardado));
 
         googleBooksService.importarPorIdExterno("id-nuevo");

@@ -44,7 +44,7 @@ export default function Listas() {
                         .filter(l => l.esPublica)
                         .map(l => ({ ...l, nombreUsuario: seguido.nombre }))
                     todasListas.push(...listas)
-                } catch { /* ignorar */ }
+                } catch { continue }
             }
             setListasAmigos(todasListas)
         } catch (err) { console.error('Error:', err); avisarCarga(err, 'No se han podido cargar las listas.') }

@@ -7,7 +7,6 @@ import { useAvisos } from '../context/AvisosContext'
 
 const EN_INICIO = 5
 
-/** "Hoy", "Ayer", "hace 3 días"… a partir de una fecha ISO. */
 function haceCuanto(fechaIso) {
     const dia = new Date(fechaIso.slice(0, 10) + 'T00:00:00')
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
@@ -28,7 +27,6 @@ function Avatar({ e }) {
     )
 }
 
-/** Frase del evento: "ha terminado Las ratas", "ha conseguido el reto…". */
 function Descripcion({ e }) {
     const libro = <Link to={`/libro/${e.idlibro}`} className="font-serif italic text-texto hover:text-acento">{e.tituloLibro}</Link>
     switch (e.tipo) {
@@ -48,8 +46,6 @@ function Descripcion({ e }) {
     }
 }
 
-/** Feed del inicio: lo que están leyendo, terminando y consiguiendo las personas que sigues. */
-/** Una línea del feed: quién, qué ha hecho, cuándo y la portada del libro. */
 export function FilaActividad({ e }) {
     return (
         <div className="group/fila flex items-center gap-3 py-3.5">
@@ -70,10 +66,8 @@ export function FilaActividad({ e }) {
     )
 }
 
-/** Clave estable de un evento para las listas de React. */
 const claveEvento = (e) => `${e.tipo}-${e.idusuario}-${e.idlibro ?? e.idreto}-${e.idresena ?? ''}-${e.fecha}`
 
-/** Sección del inicio: los últimos eventos y un enlace a la página con toda la actividad. */
 export default function ActividadSeguidos() {
     const { avisarCarga } = useAvisos()
     const { usuario } = useAuth()
@@ -83,7 +77,6 @@ export default function ActividadSeguidos() {
         if (!usuario) return
         api.get(`/actividad/seguidos?page=0&size=${EN_INICIO}`)
             .then(res => setDatos(res.data))
-            // Si falla no se muestra la sección (mejor que un "no hay actividad" que no es cierto)
             .catch(err => { console.error('Error:', err); avisarCarga(err, 'No se ha podido cargar la actividad de las personas que sigues.') })
     }, [avisarCarga, usuario])
 

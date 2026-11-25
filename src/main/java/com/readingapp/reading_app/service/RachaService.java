@@ -28,19 +28,11 @@ public class RachaService {
     private final ActividadLecturaRepository actividadLecturaRepository;
     private final Clock clock;
 
-    /**
-     * Recalcula y GUARDA la racha del usuario: gasta protectores en los días perdidos, concede los ganados
-     * y actualiza el récord. Solo la lanza el propio usuario (al entrar en la app o al registrar lectura).
-     */
     @Transactional
     public RachaDTO.Response actualizar(Long idusuario) {
         return calcular(idusuario, true);
     }
 
-    /**
-     * Racha de cualquier usuario SIN modificar nada (para verla en su perfil). Muestra el mismo número
-     * que vería él: se simula el uso de protectores, pero no se gastan ni se conceden.
-     */
     @Transactional(readOnly = true)
     public RachaDTO.Response consultar(Long idusuario) {
         return calcular(idusuario, false);
@@ -54,11 +46,9 @@ public class RachaService {
         LocalDate ayer = hoy.minusDays(1);
 
         Set<LocalDate> actividad = actividadLecturaRepository.diasConActividad(idusuario, hoy.minusDays(400));
-        // Copia: al consultar no debe tocarse la colección de la entidad (se guardaría al hacer flush)
         Set<LocalDate> protegidos = new HashSet<>(usuario.getDiasProtegidos());
         int protectores = valor(usuario.getProtectoresRacha());
 
-        // 1. Cubrir días perdidos con protectores
         Set<LocalDate> cubiertos = new HashSet<>(actividad);
         cubiertos.addAll(protegidos);
         LocalDate ultimo = cubiertos.stream().filter(d -> d.isBefore(hoy)).max(LocalDate::compareTo).orElse(null);
@@ -74,7 +64,6 @@ public class RachaService {
             }
         }
 
-        // 2. Contar días seguidos
         boolean hoyCompletado = actividad.contains(hoy);
         LocalDate cursor = hoyCompletado ? hoy : ayer;
         int racha = 0;
@@ -83,9 +72,6 @@ public class RachaService {
             cursor = cursor.minusDays(1);
         }
 
-        // 3. Premiar protector cada 7 días (máx. 2).
-        // Se cuentan los hitos (7, 14, 21...) alcanzados desde el último premio, aunque la racha
-        // no se calculase ese mismo día. Un hito alcanzado con el máximo de protectores se pierde.
         boolean nuevoProtector = false;
         LocalDate finRacha = hoyCompletado ? hoy : ayer;
         LocalDate ultimoPremio = usuario.getFechaUltimoProtector();
@@ -105,7 +91,6 @@ public class RachaService {
             nuevoProtector = guardar && protectores > antes;
         }
 
-        // 4. Récord y guardado (solo al actualizar)
         int mejor = Math.max(valor(usuario.getMejorRacha()), racha);
         if (guardar) {
             usuario.setDiasProtegidos(protegidos);
@@ -114,7 +99,6 @@ public class RachaService {
             usuarioRepository.save(usuario);
         }
 
-        // 5. Semana actual
         LocalDate lunes = hoy.with(DayOfWeek.MONDAY);
         List<RachaDTO.DiaSemana> semana = new ArrayList<>();
         for (int i = 0; i < 7; i++) {

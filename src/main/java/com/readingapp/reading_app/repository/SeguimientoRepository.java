@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> {
     List<Seguimiento> findByUsuarioIdusuario(Long idusuario);
-    /** Historial de un libro, del primer al último seguimiento (el último es el estado actual). */
     List<Seguimiento> findByUsuarioIdusuarioAndLibroIdlibroOrderByIdseguimientoAsc(Long idusuario, Long idlibro);
     List<Seguimiento> findByUsuarioIdusuarioAndEstado(Long idusuario, EstadoLectura estado);
 
@@ -37,7 +36,6 @@ public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> 
     Long sumPaginasByUsuarioEntreFechas(@Param("uid") Long uid, @Param("inicio") LocalDate inicio, @Param("fin") LocalDate fin);
 
     Long countByUsuarioIdusuarioAndEstado(Long idusuario, EstadoLectura estado);
-    /** Para los retos: las lecturas antiguas (marcadas al puntuar) no cuentan. */
     @Query("SELECT COUNT(s) FROM Seguimiento s WHERE s.usuario.idusuario = :idusuario AND s.estado = :estado " +
             "AND s.lecturaAntigua = false AND s.fecha BETWEEN :inicio AND :fin")
     Long countByUsuarioIdusuarioAndEstadoAndFechaBetween(@Param("idusuario") Long idusuario, @Param("estado") EstadoLectura estado,
@@ -55,11 +53,6 @@ public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> 
 
     long countByUsuarioIdusuarioAndLibroIdlibroAndEstado(Long idusuario, Long idlibro, EstadoLectura estado);
 
-    /**
-     * Momentos destacados de las personas que sigue un usuario, para su feed de actividad:
-     * empezar un libro (LEYENDO en la página 0), terminarlo y añadirlo a "Quiero leer".
-     * Los avances de página no se incluyen para no llenar el feed.
-     */
     @Query("SELECT s FROM Seguimiento s WHERE s.usuario IN " +
             "(SELECT seg FROM Usuario u JOIN u.seguidos seg WHERE u.idusuario = :idusuario) " +
             "AND s.fecha >= :desde AND s.lecturaAntigua = false " +
@@ -68,7 +61,6 @@ public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> 
     List<Seguimiento> findActividadDeSeguidos(@Param("idusuario") Long idusuario, @Param("desde") LocalDate desde,
                                               org.springframework.data.domain.Pageable pageable);
 
-    /** Libros cuyo estado ACTUAL (último seguimiento) es el indicado, del más reciente al más antiguo. */
     @Query("SELECT s FROM Seguimiento s WHERE s.usuario.idusuario = :idusuario " +
             "AND s.estado = :estado " +
             "AND s.idseguimiento = (SELECT MAX(s2.idseguimiento) FROM Seguimiento s2 " +

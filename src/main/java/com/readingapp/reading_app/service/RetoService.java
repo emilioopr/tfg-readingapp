@@ -62,7 +62,6 @@ public class RetoService {
 
         reto = retoRepository.save(reto);
 
-        // Quien crea un reto personal o "con amigos" participa en él desde el principio
         if (request.getModalidad() == ModalidadReto.PERSONAL || request.getModalidad() == ModalidadReto.COMPARTIDO) {
             ParticipanteReto participante = ParticipanteReto.builder()
                     .reto(reto)
@@ -90,7 +89,6 @@ public class RetoService {
             throw new IllegalArgumentException("Este reto ya ha terminado");
         }
 
-        // Si la meta común ya se alcanzó, quien se una ahora lo tendría cumplido sin haber leído nada
         if (reto.getModalidad() == ModalidadReto.COLABORATIVO
                 && participanteRetoRepository.sumProgresoByReto(idreto) >= metaReal(reto)) {
             throw new IllegalArgumentException("Este reto ya se ha completado");
@@ -125,7 +123,6 @@ public class RetoService {
     }
 
     public Page<RetoDTO.Response> obtenerDisponibles(Pageable pageable) {
-        // Todos los que puedes unirte: predefinidos + compartidos + colaborativos
         List<ModalidadReto> modalidades = List.of(
                 ModalidadReto.PREDEFINIDO, ModalidadReto.COMPARTIDO, ModalidadReto.COLABORATIVO);
         return retoRepository.findByModalidadInAndFechaFinGreaterThanEqual(modalidades, LocalDate.now(clock), pageable).map(this::toResponse);
@@ -156,12 +153,10 @@ public class RetoService {
 
     private RetoDTO.ParticipanteResponse recalcular(Reto reto, ParticipanteReto participante) {
         Long idreto = reto.getIdreto();
-        // Un reto completado o ya terminado no cambia
         if (participante.getRetoCumplido() || reto.getFechaFin().isBefore(LocalDate.now(clock))) {
             return toParticipanteResponse(participante, reto.getMeta());
         }
 
-        // Calcular progreso individual
         int nuevoProgreso = calcularProgreso(reto, participante);
         participante.setProgreso(nuevoProgreso);
         participante = participanteRetoRepository.save(participante);
@@ -180,7 +175,6 @@ public class RetoService {
         return toParticipanteResponse(participante, reto.getMeta());
     }
 
-    /*Recalcula todos los retos activos de un usuario. Llamar desde SeguimientoService y SesionLecturaService*/
     @Transactional
     public void recalcularRetosActivosDeUsuario(Long idusuario) {
         List<ParticipanteReto> activos = participanteRetoRepository
@@ -211,14 +205,11 @@ public class RetoService {
         boolean esCreador = reto.getCreador() != null
                 && reto.getCreador().getIdusuario().equals(idusuario);
 
-        // Los retos del sistema (sin creador) solo los puede borrar un admin
         if (!esCreador && !SecurityUtils.esAdmin()) {
             throw new AccessDeniedException("Solo el creador o un administrador pueden eliminar el reto");
         }
         retoRepository.delete(reto);
     }
-
-    // --- Completar retos ---
 
     private void completarParticipante(ParticipanteReto participante, Reto reto) {
         participante.setRetoCumplido(true);
@@ -227,7 +218,6 @@ public class RetoService {
 
         Usuario usuario = participante.getUsuario();
 
-        // Solo se avisa al propio usuario; sus seguidores lo ven en su feed de actividad
         notificacionService.crearNotificacionRetoCumplido(reto, usuario);
 
         log.info("Usuario {} completó el reto '{}'", usuario.getIdusuario(), reto.getTitulo());
@@ -241,20 +231,12 @@ public class RetoService {
             p.setFechaCumplimiento(LocalDateTime.now(clock));
             participanteRetoRepository.save(p);
 
-            // Se avisa a cada participante (sus seguidores lo ven en su feed de actividad)
             notificacionService.crearNotificacionRetoCumplido(reto, p.getUsuario());
         }
 
         log.info("Reto colaborativo '{}' completado por {} participantes", reto.getTitulo(), activos.size());
     }
 
-    // --- Cálculo de progreso ---
-
-    /**
-     * Progreso de un participante: solo cuenta lo leído desde que se unió al reto (o desde que empezó el reto,
-     * si se unió antes), para que unirse a un reto no lo complete con lecturas anteriores. Los seguimientos
-     * solo guardan el día, así que lo leído ese mismo día antes de unirse se descuenta con progresoInicial.
-     */
     private int calcularProgreso(Reto reto, ParticipanteReto participante) {
         int previo = participante.getProgresoInicial() != null ? participante.getProgresoInicial() : 0;
         return Math.max(0, progresoBruto(reto, participante) - previo);
@@ -280,9 +262,6 @@ public class RetoService {
         };
     }
 
-    // --- Helpers ---
-
-    /*Meta en la unidad del progreso: los retos de horas guardan el progreso en minutos.*/
     private int metaReal(Reto reto) {
         return reto.getTipo() == TipoReto.HORAS ? reto.getMeta() * 60 : reto.getMeta();
     }
